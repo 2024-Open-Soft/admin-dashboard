@@ -5,10 +5,12 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import StorageIcon from "@mui/icons-material/Storage";
+import BackupIcon from "@mui/icons-material/Backup";
 import Divider from "@mui/material/Divider";
-import InboxIcon from "@mui/icons-material/Inbox";
-import DraftsIcon from "@mui/icons-material/Drafts";
+import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import { Avatar, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const boxStyle = {
   display: "flex",
@@ -19,6 +21,12 @@ const boxStyle = {
   p: 3,
   mt: 1,
   boxSizing: "border-box",
+};
+
+const linkStyle = {
+  width: "100%",
+  textDecoration: "none",
+  color: "black",
 };
 
 export default function Sidebar() {
@@ -40,22 +48,36 @@ export default function Sidebar() {
       </Box>
       <Divider />
       <List>
-        <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              <InboxIcon />
-            </ListItemIcon>
-            <ListItemText primary="Database" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              <DraftsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Analytics" />
-          </ListItemButton>
-        </ListItem>
+        <Link to="/database" style={linkStyle}>
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <StorageIcon />
+              </ListItemIcon>
+              <ListItemText primary="Database" />
+            </ListItemButton>
+          </ListItem>
+        </Link>
+        <Link to="/analysis" style={linkStyle}>
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <AutoGraphIcon />
+              </ListItemIcon>
+              <ListItemText primary="Analytics" />
+            </ListItemButton>
+          </ListItem>
+        </Link>
+        <Link to="/upload" style={linkStyle}>
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <BackupIcon />
+              </ListItemIcon>
+              <ListItemText primary="Upload" />
+            </ListItemButton>
+          </ListItem>
+        </Link>
       </List>
     </Box>
   );
