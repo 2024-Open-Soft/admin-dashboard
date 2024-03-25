@@ -3,6 +3,10 @@
   width: 100%;
 }
 
+.ag-root-wrapper.ag-ltr.ag-layout-normal {
+  border: none !important;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
