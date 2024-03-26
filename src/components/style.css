@@ -11,3 +11,9 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+.rs-picker-search .rs-picker-search-input input {
+  /* min-width: fit-content !important; */
+  /* max-width: 100% !important; */
+  /* width: fit-content !important; */
+}

@@ -5,6 +5,7 @@ import RequireAuth from "../components/RequireAuth";
 import Error from "../components/Error";
 import { fetchUserData } from "../components/fetchUser";
 import Home from "./Home";
+import Check from "../components/Check";
 
 const LazySignUp = lazy(() => import("./SignUp"));
 const LazyLogin = lazy(() => import("./Login"));
@@ -49,6 +50,16 @@ const Navigator = () => {
       element: (
         <Suspense fallback={<h1>Loading</h1>}>
           <LazyUpload />,
+        </Suspense>
+      ),
+      protected: false,
+      errorElement: <Error />,
+    },
+    {
+      path: "/check",
+      element: (
+        <Suspense fallback={<h1>Loading</h1>}>
+          <Check />,
         </Suspense>
       ),
       protected: false,

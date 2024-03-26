@@ -1,6 +1,7 @@
 .App {
   height: 100vh;
   width: 100%;
+  overflow-y: hidden;
 }
 
 .ag-root-wrapper.ag-ltr.ag-layout-normal {

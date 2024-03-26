@@ -4,9 +4,17 @@ import { Outlet } from "react-router-dom";
 
 const Home = () => {
   return (
-    <div style={{ height: "100%", display: "flex", width: "100%" }}>
+    <div
+      style={{
+        height: "100%",
+        display: "flex",
+        width: "100%",
+      }}
+    >
       <Sidebar />
-      <Outlet />
+      <div style={{ display: "flex", width: "80%", overflowY: "auto" }}>
+        <Outlet />
+      </div>
     </div>
   );
 };
