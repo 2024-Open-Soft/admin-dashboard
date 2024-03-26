@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
 import { TagInput } from "rsuite";
 
 const style = {
@@ -19,60 +19,39 @@ const style = {
 };
 
 const Check = () => {
-  const [movieDetails, setMovieDetails] = useState({
-    movieName: "",
-    movieCertification: [{ type: "" }],
-    genre: "",
-    cast: [],
-    country: "",
-    director: "",
-    language: "",
-    writer: "",
-    releasedDate: "",
-    imdbRating: "",
-    imdbVotes: "",
-    awardName: "",
-    totalAwards: "",
-    description: "",
+  const [userDetails, setUserDetails] = useState({
+    price: "",
+    name: "",
   });
 
-  const handleInputChange = (e) => {
-    setMovieDetails({
-      ...movieDetails,
-      [e.target.name]: e.target.value,
+  const handleChange = (e) => {
+    console.log("e.target.id : ", e.target.id);
+    console.log("e.target.value : ", e.target.value);
+    setUserDetails({
+      ...userDetails,
+      [e.target.id]: e.target.value,
     });
   };
 
   // Special handler for TagInput changes
-  const handleCastChange = (value, type) => {
-    console.log("type : ", type.id);
-    console.log("value : ", value);
-    setMovieDetails({
-      ...movieDetails,
-      [type]: value,
-    });
-  };
-
-  console.log(movieDetails);
 
   return (
     <div style={{ margin: "auto", width: "50rem" }}>
       <Box sx={style.boxStyle}>
-        <Typography variant="body1" sx={{ fontSize: "large" }}>
-          Enter Cast Name
+        <Typography variant="" sx={{ fontSize: "large" }}>
+          Enter User's Name
         </Typography>
-        <TagInput
-          style={{
-            boxShadow: "none",
-            border: "1px solid rgba(0, 0, 0, 0.2)",
-            width: "100%",
-            marginTop: "0.5rem",
-            marginBottom: "1rem",
-          }}
-          id="cast"
-          onChange={(value) => handleCastChange(value, "cast")}
-          size="lg"
-          value={movieDetails.cast} // Ensure TagInput is controlled by passing the current state
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          id="name"
+          name="name"
+          autoComplete="name"
+          type="text"
+          placeholder="John Doe"
+          onChange={handleChange}
+          value={userDetails.name}
         />
       </Box>
     </div>

@@ -116,7 +116,7 @@ const CreateUser = () => {
           name="email"
           autoComplete="email"
           type="email"
-          placeholder="shubham@gmail.com"
+          placeholder="john@gmail.com"
           onChange={handleChange}
           value={userDetails.email}
         />
@@ -133,7 +133,7 @@ const CreateUser = () => {
         name="name"
         autoComplete="name"
         type="text"
-        placeholder="Shubham Chadokar"
+        placeholder="John Doe"
         onChange={handleChange}
         value={userDetails.name}
       />
