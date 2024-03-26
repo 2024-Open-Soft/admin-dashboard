@@ -87,7 +87,7 @@ const Navigator = () => {
             ))}
         </Route>
         <Route
-          element={<h1 style={{ margin: "auto" }}>Path does not exist</h1>}
+          element={<h1 style={{ margin: "auto" }}>Page does not exist</h1>}
           path="*"
         />
       </Route>
