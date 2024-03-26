@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -30,6 +30,19 @@ const linkStyle = {
 };
 
 export default function Sidebar() {
+  const [profileImage, setProfileImage] = useState(null);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -40,7 +53,20 @@ export default function Sidebar() {
       }}
     >
       <Box sx={boxStyle}>
-        <Avatar sx={{ height: "10rem", width: "10rem", mb: 2 }} />
+        <label htmlFor="avatar-upload">
+          <Avatar
+            sx={{ height: "10rem", width: "10rem", mb: 2, cursor: "pointer" }}
+            alt="Profile Image"
+            src={profileImage}
+          />
+          <input
+            id="avatar-upload"
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handleImageUpload}
+          />
+        </label>
         <Typography fontWeight="600" fontSize="1.2rem">
           Your Account
         </Typography>

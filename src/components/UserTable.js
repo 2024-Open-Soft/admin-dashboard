@@ -34,6 +34,14 @@ const CompanyLogoRenderer = ({ value }) => (
   </span>
 );
 
+const countryCodes = [
+  { code: "+91", country: "India" },
+  { code: "+1", country: "USA" },
+  { code: "+44", country: "UK" },
+  { code: "+61", country: "Australia" },
+  { code: "+81", country: "Japan" },
+];
+
 const UserTable = () => {
   const [rowData, setRowData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -48,15 +56,48 @@ const UserTable = () => {
         headerCheckboxSelection: true,
       },
       {
-        field: "Videos",
+        field: "email",
+      },
+      {
+        field: "phone",
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          min: 0,
+        },
+      },
+      {
+        headerName: "Country Code",
+        field: "countrycode",
+        cellEditor: "agSelectCellEditor",
+        cellEditorParams: {
+          values: countryCodes.map((code) => code.code),
+          valueListGap: 20,
+        },
+      },
+      {
+        field: "Screentime",
         width: 130,
-        cellRenderer: CompanyLogoRenderer,
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          min: 0,
+        },
       },
       {
         field: "plan",
         width: 125,
+        cellEditor: "agSelectCellEditor",
+        cellEditorParams: {
+          values: ["Basic", "Standard", "Premium", "Platinum"],
+          valueListGap: 20,
+        },
       },
-      { field: "genre" },
+      {
+        field: "payment",
+        cellEditor: "agSelectCellEditor",
+        cellEditorParams: {
+          values: ["Success", "Failed", "Pending"],
+        },
+      },
     ],
     []
   );
@@ -79,16 +120,19 @@ const UserTable = () => {
   const defaultColDef = useMemo(
     () => ({
       filter: true,
-      //   editable: true,
+      editable: true,
       resizable: true,
     }),
     []
   );
 
+  const onCellValueChanged = useCallback((params) => {
+    console.log("Cell value changed:", params);
+  }, []);
+
   return (
     <div className="ag-theme-quartz" style={{ width: "100%", height: "450px" }}>
       <AgGridReact
-        rowHeight={100}
         rowData={rowData}
         columnDefs={colDefs}
         defaultColDef={defaultColDef}
@@ -96,6 +140,7 @@ const UserTable = () => {
         onGridReady={onGridReady}
         onSelectionChanged={onSelectionChanged}
         pagination={true}
+        onCellValueChanged={onCellValueChanged}
       />
       <p>Selected Rows Count: {selectedRows.length}</p>
     </div>

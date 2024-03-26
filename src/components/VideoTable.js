@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import { movieCertifications } from "../data";
 
 const CompanyLogoRenderer = ({ value }) => (
   <span
@@ -34,42 +35,27 @@ const CompanyLogoRenderer = ({ value }) => (
   </span>
 );
 
-const VideoImageRenderer = ({ value }) => (
-  <span
-    style={{
-      display: "flex",
-      justifyContent: "start",
-      alignItems: "center",
-    }}
-  >
-    <img
-      alt={`${value} Mission`}
-      src={
-        value?.url ||
-        `https://ichef.bbci.co.uk/news/1024/cpsprodpb/CE00/production/_132663725_gettyimages-2013351367.jpg`
-      }
-      style={{
-        width: 150,
-        height: "100px",
-        objectFit: "cover",
-        objectPosition: "top",
-        padding: 10,
-        boxSizing: "border-box",
-      }}
-    />
-    <p
-      style={{
-        width: 150,
-        height: 100,
-        textOverflow: "ellipsis",
-        overflow: "hidden",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {value?.description || value}
-    </p>
-  </span>
-);
+// const VideoImageRenderer = ({ value }) => (
+//   <span
+//     style={{
+//       display: "flex",
+//       justifyContent: "start",
+//       alignItems: "center",
+//     }}
+//   >
+//     <p
+//       style={{
+//         width: 150,
+//         height: 100,
+//         textOverflow: "ellipsis",
+//         overflow: "hidden",
+//         whiteSpace: "nowrap",
+//       }}
+//     >
+//       {value?.description || value}
+//     </p>
+//   </span>
+// );
 
 const dateFormatter = (params) => {
   return new Date(params.value).toLocaleDateString("en-us", {
@@ -80,7 +66,7 @@ const dateFormatter = (params) => {
   });
 };
 
-const GridExample = () => {
+const VideoTable = () => {
   const [rowData, setRowData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [gridApi, setGridApi] = useState(null);
@@ -90,22 +76,33 @@ const GridExample = () => {
       {
         field: "video",
         width: 340,
-        cellRenderer: VideoImageRenderer,
+        // cellRenderer: VideoImageRenderer,
         checkboxSelection: true,
         headerCheckboxSelection: true,
       },
       {
         field: "views",
         width: 130,
-        cellRenderer: CompanyLogoRenderer,
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          min: 0,
+        },
       },
       {
         field: "likes",
         width: 125,
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          min: 0,
+        },
       },
       {
         field: "dislikes",
         width: 125,
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          min: 0,
+        },
       },
       {
         field: "date",
@@ -114,13 +111,31 @@ const GridExample = () => {
       {
         field: "price",
         width: 130,
-        valueFormatter: (params) => `£${params.value.toLocaleString()}`,
+        valueFormatter: (params) => `$${params.value.toLocaleString()}`,
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          min: 0,
+        },
       },
-      { field: "type" },
-      { field: "collection" },
+      {
+        field: "type",
+        cellEditor: "agSelectCellEditor",
+        cellEditorParams: {
+          values: movieCertifications.map((cert) => cert.type),
+          valueListGap: 20,
+        },
+      },
       { field: "director" },
-      { field: "actor" },
-      { field: "write" },
+      { field: "actors" },
+      { field: "writers" },
+      {
+        field: "description",
+        cellEditor: "agLargeTextCellEditor",
+        cellEditorPopup: true,
+        cellEditorParams: {
+          maxLength: 100,
+        },
+      },
     ],
     []
   );
@@ -156,7 +171,6 @@ const GridExample = () => {
   return (
     <div className="ag-theme-quartz" style={{ width: "100%", height: "100%" }}>
       <AgGridReact
-        rowHeight={100}
         rowData={rowData}
         columnDefs={colDefs}
         defaultColDef={defaultColDef}
@@ -171,4 +185,4 @@ const GridExample = () => {
   );
 };
 
-export default GridExample;
+export default VideoTable;

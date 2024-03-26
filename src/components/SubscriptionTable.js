@@ -42,19 +42,57 @@ const SubscriptionTable = () => {
   const colDefs = useMemo(
     () => [
       {
-        field: "Plan",
+        field: "plan",
         width: 340,
         checkboxSelection: true,
         headerCheckboxSelection: true,
       },
       {
-        field: "Videos",
+        field: "price",
         width: 130,
-        cellRenderer: CompanyLogoRenderer,
+        valueFormatter: (params) => `$${params.value.toLocaleString()}`,
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          min: 0,
+        },
       },
       {
-        field: "views",
+        field: "discount%",
         width: 125,
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          min: 0,
+        },
+      },
+      {
+        field: "discount",
+        width: 125,
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          min: 0,
+        },
+      },
+      {
+        field: "features",
+        width: 125,
+      },
+      {
+        field: "users",
+        width: 125,
+        cellEditor: "agNumberCellEditor",
+        cellEditorParams: {
+          min: 0,
+        },
+      },
+      {
+        headerName: "$Collection",
+        field: "collection",
+        width: 125,
+        cellEditor: "agNumberCellEditor",
+        // valueFormatter: (params) => `$${params.value.toLocaleString()}`,
+        cellEditorParams: {
+          min: 0,
+        },
       },
     ],
     []
@@ -91,7 +129,6 @@ const SubscriptionTable = () => {
   return (
     <div className="ag-theme-quartz" style={{ width: "100%", height: "450px" }}>
       <AgGridReact
-        rowHeight={100}
         rowData={rowData}
         columnDefs={colDefs}
         defaultColDef={defaultColDef}

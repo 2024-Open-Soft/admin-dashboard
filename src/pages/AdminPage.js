@@ -1,5 +1,4 @@
 import React from "react";
-import Sidebar from "../components/Sidebar";
 import { Box, Tab, Typography } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
@@ -7,7 +6,6 @@ import TabPanel from "@mui/lab/TabPanel";
 import VideoTable from "../components/VideoTable";
 import SubscriptionTable from "../components/SubscriptionTable";
 import UserTable from "../components/UserTable";
-import VideoUpload from "../components/VideoUpload";
 
 const AdminPage = () => {
   const [value, setValue] = React.useState("1");
@@ -36,10 +34,10 @@ const AdminPage = () => {
             <TabPanel sx={{ height: "70vh", p: 0 }} value="1">
               <VideoTable />{" "}
             </TabPanel>
-            <TabPanel value="2">
+            <TabPanel value="2" sx={{ height: "70vh", p: 0 }}>
               <SubscriptionTable />{" "}
             </TabPanel>
-            <TabPanel value="3">
+            <TabPanel value="3" sx={{ height: "70vh", p: 0 }}>
               <UserTable />{" "}
             </TabPanel>
           </TabContext>
