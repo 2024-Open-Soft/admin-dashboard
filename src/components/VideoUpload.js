@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Modal,
   Typography,
   Link,
   TextField,
@@ -59,14 +58,26 @@ const VideoUpload = () => {
     movieName: "",
     movieCertification: [
       {
-        type: "",
+        title: "",
       },
     ],
-    genre: "",
+    genre: [
+      {
+        title: "",
+      },
+    ],
     cast: "",
-    country: "",
+    country: [
+      {
+        title: "",
+      },
+    ],
     director: "",
-    language: "",
+    language: [
+      {
+        title: "",
+      },
+    ],
     writer: "",
     releasedDate: "",
     imdbRating: "",
@@ -77,11 +88,12 @@ const VideoUpload = () => {
   });
 
   const handleChange = (e) => {
+    console.log("e.target.id : ", e.target.id);
+    console.log("e.target.value : ", e.target.value);
     setMovieDetails({
       ...movieDetails,
       [e.target.id]: e.target.value,
     });
-    console.log("value : ", e.target.value);
   };
 
   const handleTagInputChange = (value, type) => {
@@ -122,11 +134,10 @@ const VideoUpload = () => {
               onChange={handleChange}
               required
               fullWidth
-              id="moviename"
+              id="movieName"
               // label="Enter email"
               value={movieDetails.movieName}
-              name="moviename"
-              autoFocus
+              name="movieName"
               sx={{ mt: 1, mb: 2 }}
             />
           </Box>
@@ -139,7 +150,6 @@ const VideoUpload = () => {
               limitTags={2}
               id="movieCertification"
               onChange={handleAutoCompleteChange}
-              value={movieDetails.movieCertification}
               options={movieCertifications}
               getOptionLabel={(option) => option.type}
               size="small"
@@ -206,10 +216,9 @@ const VideoUpload = () => {
               options={Countries}
               getOptionLabel={(option) => option.title}
               onChange={handleAutoCompleteChange}
-              value={movieDetails.country}
               size="small"
               sx={{ mt: 1, mb: 2 }}
-              renderInput={(params) => <TextField {...params} id="genre" />}
+              renderInput={(params) => <TextField {...params} id="country" />}
             />
           </Box>
           <Box sx={style.boxStyle}>
@@ -247,7 +256,6 @@ const VideoUpload = () => {
               options={cinemaLanguages}
               getOptionLabel={(option) => option.title}
               onChange={handleAutoCompleteChange}
-              value={movieDetails.language}
               size="small"
               sx={{ mt: 1, mb: 2 }}
               renderInput={(params) => (
@@ -289,7 +297,6 @@ const VideoUpload = () => {
               id="cinemaLanguage"
               options={cinemaLanguages}
               onChange={handleAutoCompleteChange}
-              value={movieDetails.language}
               getOptionLabel={(option) => option.title}
               size="small"
               sx={{ mt: 1, mb: 2 }}
@@ -310,6 +317,7 @@ const VideoUpload = () => {
                 marginTop: "0.5rem",
                 marginBottom: "1rem",
               }}
+              onChange={(value) => handleTagInputChange(value, "releasedDate")}
               id="released"
               size="lg"
             />
@@ -353,10 +361,11 @@ const VideoUpload = () => {
                 size="small"
                 required
                 fullWidth
-                id="imdbrating"
+                id="imdbRating"
+                onChange={handleChange}
+                value={movieDetails.imdbRating}
                 // label="Enter email"
-                name="imdbrating"
-                autoFocus
+                name="imdbRating"
                 sx={{ mt: 1, mb: 2 }}
               />
             </Box>
@@ -369,7 +378,9 @@ const VideoUpload = () => {
                 required
                 fullWidth
                 size="small"
-                name="imdbvotes"
+                name="imdbVotes"
+                onChange={handleChange}
+                value={movieDetails.imdbVotes}
                 // label="Password"
                 type="number"
                 id="imdbvotes"
@@ -394,10 +405,11 @@ const VideoUpload = () => {
                 size="small"
                 required
                 fullWidth
-                id="awardname"
+                id="awardName"
+                onChange={handleChange}
+                value={movieDetails.awardName}
                 // label="Enter email"
-                name="awardname"
-                autoFocus
+                name="awardName"
                 sx={{ mt: 1, mb: 2 }}
               />
             </Box>
@@ -410,10 +422,12 @@ const VideoUpload = () => {
                 required
                 fullWidth
                 size="small"
-                name="totalawards"
+                onChange={handleChange}
+                value={movieDetails.totalAwards}
+                name="totalAwards"
                 // label="Password"
-                type="text"
-                id="totalawards"
+                type="number"
+                id="totalAwards"
                 sx={{ mt: 1, mb: 2 }}
               />
             </Box>
@@ -427,9 +441,10 @@ const VideoUpload = () => {
           required
           fullWidth
           name="description"
-          maxRows={4}
           rows={3}
           multiline
+          onChange={handleChange}
+          value={movieDetails.description}
           // label="Password"
           type="text"
           id="description"
@@ -451,12 +466,6 @@ const VideoUpload = () => {
             Save
           </Button>
         </Box>
-        <Typography align="left" sx={{ mt: 2 }}>
-          {"Having trouble in uploading? "}
-          <Link href="#" variant="body1">
-            {"Get Help"}
-          </Link>
-        </Typography>
       </Box>
     </div>
   );
