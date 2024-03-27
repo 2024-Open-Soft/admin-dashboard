@@ -171,3 +171,66 @@ export const cinemaLanguages = [
   { title: "Yoruba", label: "yoruba" },
   { title: "Zulu", label: "zulu" },
 ];
+
+export const plans = [
+  {
+    plan: "660297a07584881157e4b328",
+    startDate: new Date("2024-03-29T00:00:00Z"),
+    endDate: new Date("2024-04-01T00:00:00Z"),
+    status: "TO_BE_PAID",
+  },
+  {
+    plan: "660297a07584881157e4b328",
+    startDate: new Date("2024-03-29T00:00:00Z"),
+    endDate: new Date("2024-04-01T00:00:00Z"),
+    status: "TO_BE_PAID",
+  },
+  {
+    plan: "660297a07584881157e4b328",
+    startDate: new Date("2024-03-29T00:00:00Z"),
+    endDate: new Date("2024-04-01T00:00:00Z"),
+    status: "TO_BE_PAID",
+  },
+  {
+    plan: "660297a07584881157e4b328",
+    startDate: new Date("2024-03-29T00:00:00Z"),
+    endDate: new Date("2024-04-01T00:00:00Z"),
+    status: "TO_BE_PAID",
+  },
+  {
+    plan: "660297a07584881157e4b328",
+    startDate: new Date("2024-03-29T00:00:00Z"),
+    endDate: new Date("2024-04-01T00:00:00Z"),
+    status: "TO_BE_PAID",
+  },
+  {
+    plan: "660297a07584881157e4b328",
+    startDate: new Date("2024-03-29T00:00:00Z"),
+    endDate: new Date("2024-04-01T00:00:00Z"),
+    status: "TO_BE_PAID",
+  },
+  {
+    plan: "660297a07584881157e4b328",
+    startDate: new Date("2024-03-29T00:00:00Z"),
+    endDate: new Date("2024-04-01T00:00:00Z"),
+    status: "TO_BE_PAID",
+  },
+  {
+    plan: "660297a07584881157e4b328",
+    startDate: new Date("2024-03-29T00:00:00Z"),
+    endDate: new Date("2024-04-01T00:00:00Z"),
+    status: "TO_BE_PAID",
+  },
+  {
+    plan: "660297a07584881157e4b328",
+    startDate: new Date("2024-03-29T00:00:00Z"),
+    endDate: new Date("2024-04-01T00:00:00Z"),
+    status: "TO_BE_PAID",
+  },
+  {
+    plan: "660297a07584881157e4b328",
+    startDate: new Date("2024-03-29T00:00:00Z"),
+    endDate: new Date("2024-04-01T00:00:00Z"),
+    status: "TO_BE_PAID",
+  },
+];

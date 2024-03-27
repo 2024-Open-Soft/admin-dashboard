@@ -4,7 +4,10 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Navigator from "./pages/Navigator";
+
+const queryClient = new QueryClient();
 
 const theme = createTheme({
   palette: {
@@ -44,9 +47,11 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Provider store={store}>
-          <ThemeProvider theme={theme}>
-            <Navigator />
-          </ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider theme={theme}>
+              <Navigator />
+            </ThemeProvider>
+          </QueryClientProvider>
         </Provider>
       </BrowserRouter>
     </div>

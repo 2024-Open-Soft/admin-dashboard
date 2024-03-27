@@ -2,37 +2,46 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { setUserSubscription } from "../redux/reducers/UserSubscription";
+import { subscriptionstartAndEndDate } from "./utility";
 
-const CompanyLogoRenderer = ({ value }) => (
-  <span
-    style={{
-      display: "flex",
-      alignItems: "center",
-    }}
-  >
-    {value && (
-      <img
-        alt={`${value} Logo`}
-        src={`https://www.ag-grid.com/example-assets/space-company-logos/${value.toLowerCase()}.png`}
-        style={{
-          width: "25px",
-          maxHeight: "50%",
-          marginRight: "12px",
-          filter: "brightness(1.1)",
-        }}
-      />
-    )}
-    <p
-      style={{
-        textOverflow: "ellipsis",
-        overflow: "hidden",
-        whiteSpace: "nowrap",
-      }}
+const Subscriptionsdirect = (value) => {
+  const dispatch = useDispatch();
+  const handleClicked = (e) => {
+    e.preventDefault();
+    // console.log("value : ", value);
+    const subscriptions = value?.data?.subscriptions?.map((sub) => {
+      const { startDate, endDate } = subscriptionstartAndEndDate(sub);
+      // console.log("startDate : ", startDate, "endDate : ", endDate);
+      return {
+        plan: sub?.plan,
+        startDate,
+        endDate,
+        status: sub?.status,
+      };
+    });
+    dispatch(
+      setUserSubscription({
+        id: value?.data?.id,
+        user: value?.data?.user,
+        subscriptions: subscriptions || undefined,
+      })
+    );
+    value?.data?.setValue("4");
+  };
+  return (
+    <Button
+      onClick={handleClicked}
+      sx={{ m: 0, width: "115%", mr: 10, ml: -1.5, mb: 0.5 }}
     >
-      {value}
-    </p>
-  </span>
-);
+      View
+    </Button>
+  );
+};
 
 const countryCodes = [
   { code: "+91", country: "India" },
@@ -42,15 +51,53 @@ const countryCodes = [
   { code: "+81", country: "Japan" },
 ];
 
-const UserTable = () => {
-  const [rowData, setRowData] = useState([]);
+const UserTable = ({ setValue }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [gridApi, setGridApi] = useState(null);
+
+  const getAllUsers = async () => {
+    // console.log("token : ", localStorage.getItem("token"));
+    const response = await axios
+      .get("/admin/user", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .catch((err) => {
+        console.log(err);
+        throw new Error(err);
+      });
+    let data = response.data?.data?.users;
+    if (Array.isArray(data) && data.length > 0) {
+      return await data.map((user) => {
+        return {
+          id: user?._id,
+          user: user?.name,
+          email: user?.email,
+          phone: user?.phone,
+          countrycode: user?.countrycode || "+91",
+          screentime: user?.screentime || 10,
+          subscriptions: user?.subscriptions,
+          setValue,
+        };
+      });
+    }
+    console.log("data : ", data);
+    return data;
+  };
+
+  const { data: rowData, error } = useQuery({
+    queryKey: ["all-users"],
+    queryFn: getAllUsers,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
+
+  // console.log("rowData : ", rowData);
+  // console.log("error : ", error);
 
   const colDefs = useMemo(
     () => [
       {
-        field: "User",
+        field: "user",
         width: 340,
         checkboxSelection: true,
         headerCheckboxSelection: true,
@@ -70,43 +117,69 @@ const UserTable = () => {
         field: "countrycode",
         cellEditor: "agSelectCellEditor",
         cellEditorParams: {
-          values: countryCodes.map((code) => code.code),
+          values: ["+91", "+1", "+44", "+61", "+81"],
           valueListGap: 20,
         },
       },
       {
-        field: "Screentime",
-        width: 130,
+        headerName: "Screen Time (in hours)",
+        field: "screentime",
+        width: 200,
         cellEditor: "agNumberCellEditor",
         cellEditorParams: {
           min: 0,
         },
       },
       {
-        field: "plan",
-        width: 125,
-        cellEditor: "agSelectCellEditor",
-        cellEditorParams: {
-          values: ["Basic", "Standard", "Premium", "Platinum"],
-          valueListGap: 20,
-        },
+        headerName: "Subscriptions",
+        field: "subscriptions",
+        cellRenderer: Subscriptionsdirect,
+        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
+        suppressFloatingFilterButton: true,
+        sortable: false,
+        editable: false,
       },
-      {
-        field: "payment",
-        cellEditor: "agSelectCellEditor",
-        cellEditorParams: {
-          values: ["Success", "Failed", "Pending"],
-        },
-      },
+      // {
+      //   headerName: "Latest Plan",
+      //   field: "plan",
+      //   width: 125,
+      //   cellEditor: "agSelectCellEditor",
+      //   cellEditorParams: {
+      //     values: ["Basic", "Standard", "Premium", "Platinum"],
+      //     valueListGap: 20,
+      //   },
+      // },
+      // {
+      //   field: "payment",
+      //   cellEditor: "agSelectCellEditor",
+      //   cellEditorParams: {
+      //     values: [
+      //       "TO_BE_PAID",
+      //       "ACTIVE",
+      //       "ON_HOLD",
+      //       "EXPIRED",
+      //       "PAYMENT_ERROR",
+      //     ],
+      //   },
+      // },
+      // {
+      //   headerName: "Active",
+      //   field: "active",
+      //   cellEditor: "agSelectCellEditor",
+      //   cellEditorParams: {
+      //     values: ["True", "False", "Upcoming"],
+      //   },
+      // },
     ],
     []
   );
 
-  useEffect(() => {
-    fetch("https://www.ag-grid.com/example-assets/space-mission-data.json")
-      .then((result) => result.json())
-      .then((rowData) => setRowData(rowData));
-  }, []);
+  // useEffect(() => {
+  //   fetch("https://www.ag-grid.com/example-assets/space-mission-data.json")
+  //     .then((result) => result.json())
+  //     .then((rowData) => setRowData(rowData));
+  // }, []);
 
   const onSelectionChanged = useCallback(() => {
     const selectedNodes = gridApi.getSelectedRows();
