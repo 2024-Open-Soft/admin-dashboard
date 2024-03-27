@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { Box, Typography } from "@mui/material";
+import { Autocomplete, Box, Typography } from "@mui/material";
+import axios from "axios";
+import "./style.css";
+import { useNavigate } from "react-router-dom";
 
 const style = {
   h1: {
@@ -38,11 +41,21 @@ const style = {
   },
 };
 
+const countryCodes = [
+  { code: "+91", country: "India" },
+  { code: "+1", country: "USA" },
+  { code: "+44", country: "UK" },
+  { code: "+61", country: "Australia" },
+  { code: "+81", country: "Japan" },
+];
+
 const LoginForm = () => {
   const [userDetails, setUserDetails] = useState({
-    email: "",
+    phoneNumber: "",
     password: "",
   });
+  const [countryCode, setCountryCode] = React.useState("+91");
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     setUserDetails({
@@ -51,28 +64,66 @@ const LoginForm = () => {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Email:", userDetails.email, "Password:", userDetails.password);
-    // You can add your authentication logic here
+    const response = await axios
+      .post("/user/login", {
+        ...userDetails,
+        phoneNumber: countryCode.code + userDetails.phoneNumber,
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    localStorage.setItem("token", response?.data?.data?.token);
+    localStorage.setItem("user", JSON.stringify(response?.data?.data?.user));
+    if (response?.data?.data?.user) {
+      navigate("/");
+    }
   };
 
   return (
     <Box component={"form"} sx={style.mainBox} onSubmit={handleSubmit}>
       <h1 style={style.h1}>Login</h1>
-      <Typography variant="fontSize3" width="100%" color="primary">
-        Enter Email
-      </Typography>
-      <TextField
-        label="Email"
-        variant="outlined"
-        id="email"
-        type="email"
-        value={userDetails.username}
-        onChange={handleChange}
-        required
-        style={style.textStyle}
-      />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: "1rem",
+          width: "100%",
+          md: { flexDirection: "column" },
+        }}
+      >
+        <Autocomplete
+          id="combo-box-demo"
+          options={countryCodes}
+          getOptionLabel={(option) => option.code}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              id="countryCode"
+              name="countryCode"
+              variant="outlined"
+            />
+          )}
+          disableClearable
+          sx={{ mt: 1 }}
+          onChange={(event, newValue) => {
+            setCountryCode(newValue);
+          }}
+        />
+        <TextField
+          margin="normal"
+          required
+          id="phoneNumber"
+          name="phone"
+          autoComplete="phone"
+          fullWidth
+          type="number"
+          placeholder="000 000 0000"
+          onChange={handleChange}
+        />
+      </Box>
       <Typography variant="fontSize3" width="100%" color="primary">
         Enter Password
       </Typography>

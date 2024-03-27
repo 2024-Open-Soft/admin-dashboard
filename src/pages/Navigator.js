@@ -42,7 +42,7 @@ const Navigator = () => {
           <LazyAdmin />
         </Suspense>
       ),
-      protected: false,
+      protected: true,
       errorElement: <Error />,
     },
     {
@@ -52,7 +52,7 @@ const Navigator = () => {
           <LazyUpload />,
         </Suspense>
       ),
-      protected: false,
+      protected: true,
       errorElement: <Error />,
     },
     {
@@ -73,24 +73,24 @@ const Navigator = () => {
 
   return (
     <Routes>
-      <Route element={<Home />} path="/">
-        {navItems
-          .filter((ele) => !ele.protected)
-          .map((ele, i) => (
-            <Route key={i} element={ele.element} path={ele.path} />
-          ))}
-        <Route element={<RequireAuth />}>
+      {navItems
+        .filter((ele) => !ele.protected)
+        .map((ele, i) => (
+          <Route key={i} element={ele.element} path={ele.path} />
+        ))}
+      <Route element={<RequireAuth />}>
+        <Route element={<Home />} path="/">
           {navItems
             .filter((ele) => ele.protected)
             .map((ele, i) => (
               <Route key={i} element={ele.element} path={ele.path} />
             ))}
         </Route>
-        <Route
-          element={<h1 style={{ margin: "auto" }}>Page does not exist</h1>}
-          path="*"
-        />
       </Route>
+      <Route
+        element={<h1 style={{ margin: "auto" }}>Page not found</h1>}
+        path="*"
+      />
     </Routes>
   );
 };

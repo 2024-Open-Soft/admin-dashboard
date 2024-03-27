@@ -18,7 +18,7 @@ const boxStyle = {
   alignItems: "center",
   justifyContent: "center",
   width: "100%",
-  p: 3,
+  p: 6,
   mt: 1,
   boxSizing: "border-box",
 };
@@ -30,19 +30,6 @@ const linkStyle = {
 };
 
 export default function Sidebar() {
-  const [profileImage, setProfileImage] = useState(null);
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   return (
     <Box
       sx={{
@@ -53,24 +40,10 @@ export default function Sidebar() {
       }}
     >
       <Box sx={boxStyle}>
-        <label htmlFor="avatar-upload">
-          <Avatar
-            sx={{ height: "10rem", width: "10rem", mb: 2, cursor: "pointer" }}
-            alt="Profile Image"
-            src={profileImage}
-          />
-          <input
-            id="avatar-upload"
-            type="file"
-            accept="image/*"
-            style={{ display: "none" }}
-            onChange={handleImageUpload}
-          />
-        </label>
         <Typography fontWeight="600" fontSize="1.2rem">
-          Your Account
+          John Doe
         </Typography>
-        <Typography fontSize="1rem">Shubham</Typography>
+        <Typography fontSize="1rem">Admin</Typography>
       </Box>
       <Divider />
       <List>

@@ -114,7 +114,6 @@ const VideoUpload = () => {
     setMovieFile(event.target.files[0]);
     console.log(event.target.files[0]);
   };
-  console.log(movieDetails);
 
   const handleSubmit = (e) => {};
   return (

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Box, TextField, Typography } from "@mui/material";
 import { TagInput } from "rsuite";
+import { useSelector } from "react-redux";
 
 const style = {
   form: { display: "flex", flexDirection: "column", p: 4 },
@@ -23,7 +24,8 @@ const Check = () => {
     price: "",
     name: "",
   });
-
+  const userDataCheck = useSelector((state) => state.user.data);
+  console.log("userDataCheck : ", userDataCheck);
   const handleChange = (e) => {
     console.log("e.target.id : ", e.target.id);
     console.log("e.target.value : ", e.target.value);
