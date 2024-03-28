@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   Box,
   Button,
@@ -55,44 +56,35 @@ const VideoUpload = () => {
   const [moviefile, setMovieFile] = useState(null);
 
   const [movieDetails, setMovieDetails] = useState({
-    movieName: "",
-    movieCertification: [
-      {
-        title: "",
-      },
-    ],
-    genre: [
-      {
-        title: "",
-      },
-    ],
+    title: "",
+    plot: "",
+    genres: [],
+    runtime: "",
     cast: "",
-    country: [
-      {
-        title: "",
+    languages: [],
+    released: "",
+    directors: [],
+    rated: "",
+    imdb: {
+      rating: "",
+      votes: "",
+    },
+    countries: [],
+    type: "movie",
+    tomatoes: {
+      viewer: {
+        rating: "",
+        numReviews: "",
+        meter: "",
       },
-    ],
-    director: "",
-    language: [
-      {
-        title: "",
-      },
-    ],
-    writer: "",
-    releasedDate: "",
-    imdbRating: "",
-    imdbVotes: "",
-    awardName: "",
-    totalAwards: "",
-    description: "",
+    },
   });
 
   const handleChange = (e) => {
-    console.log("e.target.id : ", e.target.id);
-    console.log("e.target.value : ", e.target.value);
+    console.log(e.target.value);
     setMovieDetails({
       ...movieDetails,
-      [e.target.id]: e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -106,7 +98,7 @@ const VideoUpload = () => {
   const handleAutoCompleteChange = (event, value) => {
     setMovieDetails({
       ...movieDetails,
-      movieCertification: value.map((item) => item),
+      [event.target.id]: value.map((item) => item.title),
     });
   };
 
@@ -115,7 +107,22 @@ const VideoUpload = () => {
     console.log(event.target.files[0]);
   };
 
-  const handleSubmit = (e) => {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:3001/admin/uploadmovie", movieDetails, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log(movieDetails);
+      console.log("Movie uploaded successfully:", response.data);
+      // Reset form fields or navigate to another page upon successful upload
+    } catch (error) {
+      console.error("Error uploading movie:", error);
+    }
+  };
   return (
     <div>
       <Box component={"form"} onSubmit={handleSubmit} sx={style.form}>
@@ -133,14 +140,14 @@ const VideoUpload = () => {
               onChange={handleChange}
               required
               fullWidth
-              id="movieName"
+              id="title"
               // label="Enter email"
-              value={movieDetails.movieName}
-              name="movieName"
+              value={movieDetails.title}
+              name="title"
               sx={{ mt: 1, mb: 2 }}
             />
           </Box>
-          <Box sx={style.boxStyle}>
+          {/* <Box sx={style.boxStyle}>
             <Typography variant="" sx={{ fontSize: "large" }}>
               Movie Certification
             </Typography>
@@ -157,7 +164,7 @@ const VideoUpload = () => {
                 <TextField {...params} id="movieCertifications" />
               )}
             />
-          </Box>
+          </Box> */}
         </Box>
         <Box
           component={"div"}
@@ -165,18 +172,20 @@ const VideoUpload = () => {
         >
           <Box sx={style.boxStyle}>
             <Typography variant="" sx={{ fontSize: "large" }}>
-              Enter Genre
+              Genres
             </Typography>
             <Autocomplete
               multiple
               limitTags={2}
-              id="genre"
+              id="genres"
+              onChange={handleAutoCompleteChange}
               options={genres}
               getOptionLabel={(option) => option.title}
-              onChange={handleAutoCompleteChange}
               size="small"
               sx={{ mt: 1, mb: 2 }}
-              renderInput={(params) => <TextField {...params} id="genre" />}
+              renderInput={(params) => (
+                <TextField {...params} id="genres" />
+              )}
             />
           </Box>
           <Box sx={style.boxStyle}>
@@ -211,15 +220,16 @@ const VideoUpload = () => {
               multiple
               limitTags={2}
               onOpen={() => countries(dispatch)}
-              id="country"
+              id="countries" // Changed id to match schema
               options={Countries}
               getOptionLabel={(option) => option.title}
               onChange={handleAutoCompleteChange}
               size="small"
               sx={{ mt: 1, mb: 2 }}
-              renderInput={(params) => <TextField {...params} id="country" />}
+              renderInput={(params) => <TextField {...params} id="countries" />} // Changed id to match schema
             />
           </Box>
+
           <Box sx={style.boxStyle}>
             <Typography variant="" sx={{ fontSize: "large" }}>
               Enter Director Name
@@ -232,13 +242,14 @@ const VideoUpload = () => {
                 marginTop: "0.5rem",
                 marginBottom: "1rem",
               }}
-              onChange={(value) => handleTagInputChange(value, "director")}
-              value={movieDetails.director}
-              id="director"
+              onChange={(value) => handleTagInputChange(value, "directors")} // Changed "director" to "directors" to match schema
+              value={movieDetails.directors} // Changed "director" to "directors" to match schema
+              id="directors" // Changed id to match schema
               menuStyle={{ width: "100%" }}
               size="lg"
             />
           </Box>
+
         </Box>
         <Box
           component={"div"}
@@ -251,17 +262,18 @@ const VideoUpload = () => {
             <Autocomplete
               multiple
               limitTags={2}
-              id="cinemaLanguage"
+              id="languages" // Changed id to match schema
               options={cinemaLanguages}
               getOptionLabel={(option) => option.title}
               onChange={handleAutoCompleteChange}
               size="small"
               sx={{ mt: 1, mb: 2 }}
               renderInput={(params) => (
-                <TextField {...params} id="cinemaLanguage " />
+                <TextField {...params} id="languages" /> // Changed id to match schema
               )}
             />
           </Box>
+
           <Box sx={style.boxStyle}>
             <Typography variant="" sx={{ fontSize: "large" }}>
               Enter Writer Name
@@ -274,9 +286,9 @@ const VideoUpload = () => {
                 marginTop: "0.5rem",
                 marginBottom: "1rem",
               }}
-              id="writer"
-              onChange={(value) => handleTagInputChange(value, "writer")}
-              value={movieDetails.writer}
+              id="writers" // Changed id to match schema
+              onChange={(value) => handleTagInputChange(value, "writers")} // Changed "writer" to "writers" to match schema
+              value={movieDetails.writers} // Changed "writer" to "writers" to match schema
               menuStyle={{ width: "100%" }}
               size="lg"
             />
@@ -293,17 +305,18 @@ const VideoUpload = () => {
             <Autocomplete
               multiple
               limitTags={2}
-              id="cinemaLanguage"
+              id="languages" // Changed id to match schema
               options={cinemaLanguages}
               onChange={handleAutoCompleteChange}
               getOptionLabel={(option) => option.title}
               size="small"
               sx={{ mt: 1, mb: 2 }}
               renderInput={(params) => (
-                <TextField {...params} id="cinemaLanguage " />
+                <TextField {...params} id="languages" /> // Changed id to match schema
               )}
             />
           </Box>
+
           <Box sx={style.boxStyle}>
             <Typography variant="" sx={{ fontSize: "large" }}>
               Select Released Date
@@ -317,7 +330,7 @@ const VideoUpload = () => {
                 marginBottom: "1rem",
               }}
               onChange={(value) => handleTagInputChange(value, "releasedDate")}
-              id="released"
+              id="releasedDate" // Changed id to match schema
               size="lg"
             />
           </Box>
@@ -368,24 +381,6 @@ const VideoUpload = () => {
                 sx={{ mt: 1, mb: 2 }}
               />
             </Box>
-            <Box sx={style.boxStyle}>
-              <Typography variant="" sx={{ fontSize: "midium" }}>
-                Total Votes
-              </Typography>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                size="small"
-                name="imdbVotes"
-                onChange={handleChange}
-                value={movieDetails.imdbVotes}
-                // label="Password"
-                type="number"
-                id="imdbvotes"
-                sx={{ mt: 1, mb: 2 }}
-              />
-            </Box>
           </Box>
           <Box
             component={"div"}
@@ -397,7 +392,7 @@ const VideoUpload = () => {
           >
             <Box sx={style.boxStyle}>
               <Typography variant="" sx={{ fontSize: "midium" }}>
-                Some Information
+                Some Information.
               </Typography>
               <TextField
                 margin="normal"
@@ -433,20 +428,18 @@ const VideoUpload = () => {
           </Box>
         </Box>
         <Typography variant="" sx={{ fontSize: "large" }}>
-          Description
+          plot
         </Typography>
         <TextField
           margin="normal"
           required
           fullWidth
-          name="description"
+          name="plot"
           rows={3}
           multiline
           onChange={handleChange}
           value={movieDetails.description}
-          // label="Password"
-          type="text"
-          id="description"
+          id="plot" // Changed id to match schema
           sx={{ mt: 1, mb: 2 }}
         />
         <Box sx={style.buttonBox}>
