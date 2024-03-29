@@ -11,6 +11,7 @@ import Divider from "@mui/material/Divider";
 import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import { Avatar, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const boxStyle = {
   display: "flex",
@@ -30,6 +31,8 @@ const linkStyle = {
 };
 
 export default function Sidebar() {
+  const user = useSelector((state) => state.user.data);
+
   return (
     <Box
       sx={{
@@ -41,7 +44,7 @@ export default function Sidebar() {
     >
       <Box sx={boxStyle}>
         <Typography fontWeight="600" fontSize="1.2rem">
-          John Doe
+          {user ? user.name : "Admin"}
         </Typography>
         <Typography fontSize="1rem">Admin</Typography>
       </Box>

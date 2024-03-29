@@ -11,6 +11,8 @@ import {
 import React, { useState } from "react";
 import "./style.css";
 import { TagInput } from "rsuite";
+import { required } from "./required";
+import axios from "axios";
 
 const style = {
   form: {
@@ -42,40 +44,105 @@ const style = {
   },
 };
 
-const countryCodes = [
-  { code: "+91", country: "India" },
-  { code: "+1", country: "USA" },
-  { code: "+44", country: "UK" },
-  { code: "+61", country: "Australia" },
-  { code: "+81", country: "Japan" },
+const resolution = [
+  {
+    description: "Max Resolution - 144p",
+    value: "144p",
+  },
+  {
+    description: "Max Resolution - 240p",
+    value: "240p",
+  },
+  {
+    description: "Max Resolution - 360p",
+    value: "360p",
+  },
+  {
+    description: "Max Resolution - 480p",
+    value: "480p",
+  },
+  {
+    description: "Max Resolution - 720p",
+    value: "720p",
+  },
+  {
+    description: "Max Resolution - 1080p",
+    value: "1080p",
+  },
+  {
+    description: "Max Resolution - 1440p",
+    value: "1440p",
+  },
+  {
+    description: "Max Resolution - 2160p",
+    value: "2160p",
+  },
 ];
 
 const CreatePlan = () => {
-  const [value, setValue] = React.useState("");
+  const [error, setError] = useState("");
 
-  const [userDetails, setUserDetails] = useState({
+  const [planDetails, setPlanDetails] = useState({
     price: "",
     name: "",
-    dicountPercent: "",
+    discountPercentage: "",
     dicountAmount: "",
-    features: [],
+    maxResolution: "",
+    maxDevices: "",
   });
 
   const handleChange = (e) => {
-    setUserDetails({
-      ...userDetails,
+    setPlanDetails({
+      ...planDetails,
       [e.target.id]: e.target.value,
     });
   };
 
-  const handleTagInputChange = (value, type) => {
-    setUserDetails({
-      ...userDetails,
-      [type]: value,
+  const handleAutoCompleteChange = (event, value, key) => {
+    setPlanDetails({
+      ...planDetails,
+      [key]: value,
     });
   };
 
-  const handleSubmit = (e) => {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const reqrd = required(planDetails);
+    if (reqrd) {
+      setError("All fields are required");
+      return;
+    }
+    const headers = {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    };
+    setError("");
+    await axios
+      .post(
+        "/admin/plan",
+        {
+          ...planDetails,
+          features: [
+            {
+              name: "max-resolution",
+              ...planDetails.maxResolution,
+            },
+            {
+              name: "max-devices",
+              description: `Max Devices - ${planDetails.maxDevices}`,
+              value: planDetails.maxDevices,
+            },
+          ],
+        },
+        { headers }
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <Box
@@ -84,6 +151,9 @@ const CreatePlan = () => {
       onSubmit={handleSubmit}
       sx={style.form}
     >
+      <Typography variant="" sx={{ fontSize: "small", color: "red" }}>
+        {error}
+      </Typography>
       <Box sx={style.boxStyle}>
         <Box sx={{ width: "48%" }}>
           <Typography variant="" sx={{ fontSize: "large" }}>
@@ -94,12 +164,12 @@ const CreatePlan = () => {
             required
             fullWidth
             id="name"
-            name="name"
-            autoComplete="name"
+            name="plan"
+            autoComplete="plan"
             type="text"
             placeholder="Gold"
             onChange={handleChange}
-            value={userDetails.name}
+            value={planDetails.name}
           />
         </Box>
         <Box sx={{ width: "48%" }}>
@@ -113,7 +183,7 @@ const CreatePlan = () => {
             onChange={handleChange}
             type="number"
             name="price"
-            value={userDetails.price}
+            value={planDetails.price}
             placeholder="5"
           />
         </Box>
@@ -127,13 +197,13 @@ const CreatePlan = () => {
             margin="normal"
             required
             fullWidth
-            id="dicountPercent"
-            name="dicountPercent"
-            autoComplete="dicountPercent"
+            id="discountPercentage"
+            name="discountPercentage"
+            autoComplete="discountPercentage"
             type="number"
             placeholder="10"
             onChange={handleChange}
-            value={userDetails.dicountPercent}
+            value={planDetails.discountPercentage}
           />
         </Box>
         <Box sx={{ width: "48%" }}>
@@ -147,29 +217,53 @@ const CreatePlan = () => {
             onChange={handleChange}
             type="number"
             name="dicountAmount"
-            value={userDetails.dicountAmount}
+            value={planDetails.dicountAmount}
             placeholder="2"
           />
         </Box>
       </Box>
-      <Typography variant="" sx={{ fontSize: "large", mt: 1, mb: 1 }}>
-        Features
-      </Typography>
-      <TagInput
-        style={{
-          boxShadow: "none",
-          border: "1px solid rgba(0, 0, 0, 0.2)",
-          width: "100%",
-          marginTop: "0.5rem",
-          marginBottom: "1rem",
-        }}
-        onChange={(value) => handleTagInputChange(value, "features")}
-        id="features"
-        menuStyle={{ width: "100%" }}
-        size="lg"
-        value={userDetails.features}
-        placeholder="720p"
-      />
+      <Box sx={style.boxStyle}>
+        <Box sx={{ width: "48%" }}>
+          <Typography variant="" sx={{ fontSize: "large" }}>
+            Max Resolution
+          </Typography>
+          <Autocomplete
+            id="maxResolution"
+            onChange={(event, value) =>
+              handleAutoCompleteChange(event, value, "maxResolution")
+            }
+            options={resolution}
+            getOptionLabel={(option) => option.value}
+            size="large"
+            sx={{ mt: 2, mb: 2 }}
+            renderInput={(params) => (
+              <TextField
+                placeholder={"720"}
+                type="text"
+                {...params}
+                id="maxResolution"
+              />
+            )}
+          />
+        </Box>
+        <Box sx={{ width: "48%" }}>
+          <Typography variant="" sx={{ fontSize: "large", mt: 1, mb: 1 }}>
+            Max Devices
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="maxDevices"
+            name="maxDevices"
+            autoComplete="maxDevices"
+            type="number"
+            placeholder="2"
+            onChange={handleChange}
+            value={planDetails.maxDevices}
+          />
+        </Box>
+      </Box>
 
       <Box sx={style.buttonBox}>
         <Button type="submit" variant="contained">
