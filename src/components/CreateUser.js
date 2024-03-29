@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import "./style.css";
+import axios from "axios";
 
 const style = {
   form: {
@@ -15,7 +16,6 @@ const style = {
     p: 4,
     margin: "auto",
     width: "50%",
-    height: "100%",
     justifyContent: "center",
   },
   boxStyle: {
@@ -46,12 +46,15 @@ const countryCodes = [
 ];
 
 const CreateUser = () => {
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState({ code: "+91", country: "India" });
 
   const [userDetails, setUserDetails] = useState({
     email: "",
-    phone: "",
+    countryCode: "",
+    phoneNumber: "",
     name: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const handleChange = (e) => {
@@ -61,7 +64,38 @@ const CreateUser = () => {
     });
   };
 
-  const handleSubmit = (e) => {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setUserDetails({ ...userDetails, countryCode: value.code });
+
+    if (userDetails.password !== userDetails.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    // remove confirmPassword from userDetails and create a new object
+    const newUser = { ...userDetails };
+    delete newUser.confirmPassword;
+
+    // push the user to the database using post request v
+    const headers = {
+      "Content-type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("token")}`,
+    }
+    // const response = await fetch("/admin/user", { method: "POST", headers, body: JSON.stringify(newUser) });
+    const response = await axios.post("/admin/user", newUser, { headers });
+    // console.log(response);
+
+    // clear the form
+    setUserDetails({
+      email: "",
+      countryCode: "",
+      phoneNumber: "",
+      name: "",
+      password: "",
+      confirmPassword: "",
+    });
+  };
 
   return (
     <Box
@@ -79,7 +113,8 @@ const CreateUser = () => {
           options={countryCodes}
           getOptionLabel={(option) => option.code}
           sx={{ mt: 2, mb: 2 }}
-          onChange={(event, newValue) => setValue(newValue)}
+          value={value}
+          onChange={(event, newValue) => { setValue(newValue); /*console.log(value)*/ }}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -95,12 +130,12 @@ const CreateUser = () => {
           margin="normal"
           required
           fullWidth
-          id="phone"
-          name="phone"
-          autoComplete="phone"
+          id="phoneNumber"
+          name="phoneNumber"
+          autoComplete="phoneNumber"
           type="number"
           placeholder="000 000 0000"
-          value={userDetails.phone}
+          value={userDetails.phoneNumber}
           onChange={handleChange}
         />
       </Box>
@@ -136,6 +171,36 @@ const CreateUser = () => {
         placeholder="John Doe"
         onChange={handleChange}
         value={userDetails.name}
+      />
+      <Typography variant="" sx={{ fontSize: "large" }}>
+        Enter User's Password
+      </Typography>
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="password"
+        name="password"
+        autoComplete="password"
+        type="password"
+        placeholder="************"
+        onChange={handleChange}
+        value={userDetails.password}
+      />
+      <Typography variant="" sx={{ fontSize: "large" }}>
+        Re-enter User's Password
+      </Typography>
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="confirmPassword"
+        name="confirmPassword"
+        autoComplete="confirmPassword"
+        type="password"
+        placeholder="************"
+        onChange={handleChange}
+        value={userDetails.confirmPassword}
       />
       <Box sx={style.buttonBox}>
         <Button type="submit" variant="contained">
