@@ -56,7 +56,7 @@ const UserTable = ({ setValue }) => {
   const [gridApi, setGridApi] = useState(null);
 
   const getAllUsers = async () => {
-    // console.log("token : ", localStorage.getItem("token"));
+    console.log("token : ", localStorage.getItem("token"));
     const response = await axios
       .get("/admin/user", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -65,7 +65,9 @@ const UserTable = ({ setValue }) => {
         console.log(err);
         throw new Error(err);
       });
+      console.log('res : ', response)
     let data = response.data?.data?.users;
+    console.log("hello");
     if (Array.isArray(data) && data.length > 0) {
       return await data.map((user) => {
         return {
@@ -80,7 +82,9 @@ const UserTable = ({ setValue }) => {
         };
       });
     }
+    console.log("no no no");
     console.log("data : ", data);
+    console.log("yes yes yes");
     return data;
   };
 
