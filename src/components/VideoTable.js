@@ -60,7 +60,6 @@ const CompanyLogoRenderer = ({ value }) => (
 // );
 
 const dateFormatter = (params) => {
-  
   return new Date(params.value).toLocaleDateString("en-us", {
     weekday: "long",
     year: "numeric",
@@ -76,15 +75,15 @@ const VideoTable = () => {
 
   const getAllMovies = async () => {
     console.log("token : ", localStorage.getItem("token"));
-    const response = await axios 
-    .get("/admin/movie",{
-      headers: {Authorization: `Bearer ${localStorage.getItem("token")}`},
-    })
-    .catch((err) =>{
-      console.log(err);
-      throw new Error(err);
-    });
-    console.log('res : ', response);
+    const response = await axios
+      .get("/admin/movie", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .catch((err) => {
+        console.log(err);
+        throw new Error(err);
+      });
+    console.log("res : ", response);
     let data = response.data?.data?.movies || [];
     console.log("hello");
 
@@ -147,23 +146,23 @@ const VideoTable = () => {
         valueFormatter: dateFormatter,
       },
       // {
-        //   field: "dislikes",
-        //   width: 125,
-        //   cellEditor: "agNumberCellEditor",
-        //   cellEditorParams: {
-          //     min: 0,
-          //   },
-          // },
-          // {
+      //   field: "dislikes",
+      //   width: 125,
+      //   cellEditor: "agNumberCellEditor",
+      //   cellEditorParams: {
+      //     min: 0,
+      //   },
+      // },
+      // {
       //   field: "price",
       //   width: 130,
       //   valueFormatter: (params) => `$${params.value.toLocaleString()}`,
       //   cellEditor: "agNumberCellEditor",
       //   cellEditorParams: {
-        //     min: 0,
-        //   },
-        // },
-        {
+      //     min: 0,
+      //   },
+      // },
+      {
         field: "genre",
         cellEditor: "agSelectCellEditor",
         cellEditorParams: {
@@ -183,7 +182,7 @@ const VideoTable = () => {
         },
       },
       {
-        field: "IMDB", 
+        field: "IMDB",
       },
       { field: "languages" },
       // {
