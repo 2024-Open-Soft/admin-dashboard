@@ -1,6 +1,6 @@
 # Admin Dashboard
 
-Admin access and control center
+Admin access and control center for MFLIX
 
 ## Table of Contents
 
@@ -35,11 +35,9 @@ Admin access and control center
 
 ## Defining environment variables
 
-
 ```bash
-need to update this (if any)
+REACT_APP_BACKEND_URL='<backend url>'
 ```
-
 
 ## Run the project
 
