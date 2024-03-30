@@ -13,6 +13,7 @@ import "./style.css";
 import { TagInput } from "rsuite";
 import { required } from "./required";
 import axios from "axios";
+import createToast from "../utils/createToast";
 
 const style = {
   form: {
@@ -138,9 +139,11 @@ const CreatePlan = () => {
       )
       .then((res) => {
         console.log(res);
+        createToast(res?.data?.data?.message, "success");
       })
       .catch((err) => {
         console.log(err);
+        createToast(err?.response?.data?.error)
       });
   };
 

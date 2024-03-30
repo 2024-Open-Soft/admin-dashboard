@@ -6,6 +6,7 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { Button } from "@mui/material";
+import createToast from "../utils/createToast";
 
 const CompanyLogoRenderer = ({ value }) => (
   <span
@@ -47,9 +48,11 @@ const DeleteButton = (value) => {
       });
 
       console.log("response : ", response);
+      createToast(response?.data?.message, "success");
     }
     catch (err) {
       console.log(err);
+      createToast(err?.response?.data?.error, "error");
     }
   };
   return (
@@ -74,10 +77,12 @@ const PlanTable = () => {
       })
       .catch((err) => {
         console.log(err);
+        createToast(err?.response?.data?.error, "error");
         throw new Error(err);
       });
     let data = response?.data;
     if (Array.isArray(data) && data.length > 0) {
+      createToast(response?.data?.message, "success");
       return await data.map((plan) => {
         const maxResolution = plan?.features?.filter(
           (feature) => feature.name === "max-resolution"
@@ -96,6 +101,8 @@ const PlanTable = () => {
         };
       });
     }
+
+    createToast(response?.data?.message, "success");
     return response;
   };
 
@@ -206,8 +213,11 @@ const PlanTable = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       );
+
+      createToast(response?.data?.message, "success");
     }
     catch (err) {
+      createToast(err?.response?.data?.error, "error");
       console.log(err);
     }
   }, []);

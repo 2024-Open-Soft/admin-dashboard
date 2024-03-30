@@ -6,6 +6,7 @@ import store from "./redux/store";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Navigator from "./pages/Navigator";
+import { ToastContainer } from "react-toastify";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ function App() {
           <QueryClientProvider client={queryClient}>
             <ThemeProvider theme={theme}>
               <Navigator />
+              <ToastContainer />
             </ThemeProvider>
           </QueryClientProvider>
         </Provider>

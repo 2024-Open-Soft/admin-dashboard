@@ -4,6 +4,7 @@ import { Box, Button, Grid, Link, TextField, Typography } from "@mui/material";
 import "./style.css";
 import Autocomplete from "@mui/material/Autocomplete";
 import { MuiOtpInput } from "mui-one-time-password-input";
+import createToast from "../utils/createToast";
 
 const countryCodes = [
   { code: "+91", country: "India" },
@@ -35,8 +36,10 @@ const VerificationPhone = ({ setStep }) => {
       });
       console.log(response);
       localStorage.setItem("token", response.data.data.token);
+      createToast(response?.data?.message, "success")
     } catch (err) {
       console.log(err);
+      createToast(err?.response?.data?.error, "error")
     }
   };
 
@@ -58,6 +61,7 @@ const VerificationPhone = ({ setStep }) => {
 
       console.log(response);
       localStorage.setItem("token", response.data.data.token);
+      createToast(response?.data?.message, "success")
     } catch (err) {
       console.log(err);
     }

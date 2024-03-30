@@ -9,6 +9,7 @@ import React, { useState } from "react";
 import "./style.css";
 import axios from "axios";
 import { required } from "./required";
+import createToast from "../utils/createToast";
 
 const style = {
   form: {
@@ -99,6 +100,7 @@ const CreateUser = () => {
       .post("/admin/user", { ...userDetails, phoneNumber: userDetails.phone }, { headers })
       .then((res) => {
         console.log(res);
+        createToast(res?.data?.message, "success");
         setUserDetails({
           email: "",
           countryCode: "",
@@ -109,6 +111,8 @@ const CreateUser = () => {
         });
       })
       .catch((err) => {
+        // setError(err?.response?.data?.error);
+        createToast(err?.response?.data?.error, "error");
         console.log(err);
       });
   };

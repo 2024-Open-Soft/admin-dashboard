@@ -22,6 +22,7 @@ import "./style.css";
 import axios from "axios";
 import { required } from ".///required";
 import { set } from "rsuite/esm/utils/dateUtils";
+import createToast from "../utils/createToast";
 
 const style = {
   form: { display: "flex", flexDirection: "column", p: 4 },
@@ -133,8 +134,12 @@ const VideoUpload = () => {
       .post(`/admin/movie/${id}/tailer/upload`, formData, config)
       .then((res) => {
         console.log(res);
+        createToast(res?.data?.message, "success")
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        createToast(err?.response?.data?.message, "error")
+      });
   };
 
   const handleMovieFileSubmit = async (id) => {
@@ -150,9 +155,13 @@ const VideoUpload = () => {
       .post(`/admin/movie/${id}/upload`, formData, config)
       .then((res) => {
         console.log(res);
+        createToast(res?.data?.message, "success")
         handleTrailerFileSubmit(id);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        createToast(err?.response?.data?.message, "error")
+      });
   };
 
   const handleSubmit = async (e) => {
@@ -179,9 +188,13 @@ const VideoUpload = () => {
       .post(`/admin/movie/upload`, { ...movieDetails }, config)
       .then((res) => {
         console.log(res);
+        createToast(res?.data?.message, "success")
         handleMovieFileSubmit(res.data._id);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        createToast(err?.response?.data?.message, "error")
+      });
   };
 
   return (

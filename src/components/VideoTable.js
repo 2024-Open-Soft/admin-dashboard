@@ -5,6 +5,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import { movieCertifications } from "../data";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import createToast from "../utils/createToast";
 
 const CompanyLogoRenderer = ({ value }) => (
   <span
@@ -81,6 +82,7 @@ const VideoTable = () => {
       })
       .catch((err) => {
         console.log(err);
+        createToast(err?.response?.data?.error, "error");
         throw new Error(err);
       });
     console.log("res : ", response);
@@ -90,6 +92,7 @@ const VideoTable = () => {
     console.log("data : ", data);
 
     if (Array.isArray(data) && data.length > 0) {
+      createToast(response?.data?.message, "success");
       return await data.map((movie) => {
         return {
           id: movie?._id,
@@ -108,7 +111,7 @@ const VideoTable = () => {
     console.log("no no no");
     console.log("data : ", data);
     console.log("yes yes yes");
-
+    createToast(response?.data?.message, "error");
     return data;
   };
 

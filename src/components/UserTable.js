@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { setUserSubscription } from "../redux/reducers/UserSubscription";
 import { subscriptionstartAndEndDate } from "./utility";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import createToast from "../utils/createToast";
 
 const Subscriptionsdirect = (value) => {
   const dispatch = useDispatch();
@@ -53,9 +54,11 @@ const DeleteButton = (value) => {
       });
 
       console.log("response : ", response);
+      createToast("User Deleted Successfully", "success");
     }
     catch (err) {
       console.log(err);
+      createToast(err?.response?.data?.error, "error");
     }
   };
   return (
@@ -88,12 +91,14 @@ const UserTable = ({ setValue }) => {
       })
       .catch((err) => {
         console.log(err);
+        createToast(err?.response?.data?.error, "error");
         throw new Error(err);
       });
     console.log('res : ', response)
     let data = response.data?.data?.users;
     console.log("hello");
     if (Array.isArray(data) && data.length > 0) {
+      createToast(response?.data?.message, "success");
       return await data.map((user) => {
         return {
           id: user?._id,
@@ -110,6 +115,7 @@ const UserTable = ({ setValue }) => {
     console.log("no no no");
     console.log("data : ", data);
     console.log("yes yes yes");
+    createToast(response?.data?.message, "success");
     return data;
   };
 
@@ -250,10 +256,11 @@ const UserTable = ({ setValue }) => {
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
-
+        createToast("User Updated Successfully", "success");
     }
     catch (err) {
       console.log(err);
+      createToast(err?.response?.data?.error, "error");
     }
   }, []);
 
