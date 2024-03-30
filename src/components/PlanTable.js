@@ -4,6 +4,8 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import { Button } from "@mui/material";
 
 const CompanyLogoRenderer = ({ value }) => (
   <span
@@ -35,6 +37,30 @@ const CompanyLogoRenderer = ({ value }) => (
     </p>
   </span>
 );
+
+const DeleteButton = (value) => {
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.delete(`admin/plan/${value?.data?.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+
+      console.log("response : ", response);
+    }
+    catch (err) {
+      console.log(err);
+    }
+  };
+  return (
+    <Button
+      onClick={handleDelete}
+      sx={{ m: 0, width: "115%", mr: 10, ml: -1.5, mb: 0.5 }}
+    >
+      <DeleteOutlineOutlinedIcon sx={{ color: "black"}}/>
+    </Button>
+  );
+};
 
 const PlanTable = () => {
   const [selectedRows, setSelectedRows] = useState([]);
@@ -120,6 +146,16 @@ const PlanTable = () => {
         field: "max-devices",
         width: 200,
       },
+      {
+        headerName: "Delete",
+        field: "delete",
+        cellRenderer: DeleteButton,
+        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
+        suppressFloatingFilterButton: true,
+        sortable: false,
+        editable: false,
+      },
       // {
       //   field: "discount",
       //   width: 125,
@@ -157,7 +193,23 @@ const PlanTable = () => {
   );
 
   const onCellValueChanged = useCallback((params) => {
-    console.log("Cell value changed:", params);
+    try {
+      console.log("Cell value changed:", params);
+      const response = axios.put(`admin/plan/${params.data.id}`, {
+        name: params.data.plan,
+        price: params.data.price,
+        discountPercentage: params.data["discount%"],
+        maxResolution: params.data["max-resolution"],
+        maxDevices: params.data["max-devices"],
+      },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+    }
+    catch (err) {
+      console.log(err);
+    }
   }, []);
 
   return (

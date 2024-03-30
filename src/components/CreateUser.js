@@ -66,6 +66,15 @@ const CreateUser = () => {
     });
   };
 
+  const handleCountryCodeChange = (value) => {
+    // console.log("e.target.value: ", e.target.value);
+    console.log("value: ", value);
+    setUserDetails({
+      ...userDetails,
+      countryCode: value,
+    });
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     // setUserDetails({ ...userDetails, countryCode: value.code });
@@ -87,7 +96,7 @@ const CreateUser = () => {
     };
 
     await axios
-      .post("/admin/user", { ...userDetails }, { headers })
+      .post("/admin/user", { ...userDetails, phoneNumber: userDetails.phone }, { headers })
       .then((res) => {
         console.log(res);
         setUserDetails({
@@ -126,6 +135,7 @@ const CreateUser = () => {
           value={value}
           onChange={(event, newValue) => {
             setValue(newValue);
+            handleCountryCodeChange(newValue.code)
           }}
           renderInput={(params) => (
             <TextField
@@ -134,6 +144,7 @@ const CreateUser = () => {
               name="countryCode"
               placeholder="+91"
               variant="outlined"
+              onChange={handleCountryCodeChange}
             />
           )}
           disableClearable

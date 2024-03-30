@@ -191,7 +191,7 @@ const CreatePlan = () => {
       <Box sx={style.boxStyle}>
         <Box sx={{ width: "48%" }}>
           <Typography variant="" sx={{ fontSize: "large", mt: 1, mb: 1 }}>
-            Dicount %
+            Discount %
           </Typography>
           <TextField
             margin="normal"
@@ -208,7 +208,7 @@ const CreatePlan = () => {
         </Box>
         <Box sx={{ width: "48%" }}>
           <Typography variant="" sx={{ fontSize: "large", mt: 1, mb: 1 }}>
-            Dicount Amount
+            Discount Amount
           </Typography>
           <OutlinedInput
             id="dicountAmount"

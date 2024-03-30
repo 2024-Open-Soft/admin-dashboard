@@ -8,6 +8,7 @@ import { Button } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { setUserSubscription } from "../redux/reducers/UserSubscription";
 import { subscriptionstartAndEndDate } from "./utility";
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
 const Subscriptionsdirect = (value) => {
   const dispatch = useDispatch();
@@ -43,6 +44,30 @@ const Subscriptionsdirect = (value) => {
   );
 };
 
+const DeleteButton = (value) => {
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.delete(`admin/user/${value?.data?.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+
+      console.log("response : ", response);
+    }
+    catch (err) {
+      console.log(err);
+    }
+  };
+  return (
+    <Button
+      onClick={handleDelete}
+      sx={{ m: 0, width: "115%", mr: 10, ml: -1.5, mb: 0.5 }}
+    >
+      <DeleteOutlineOutlinedIcon sx={{ color: "black"}}/>
+    </Button>
+  );
+};
+
 const countryCodes = [
   { code: "+91", country: "India" },
   { code: "+1", country: "USA" },
@@ -65,7 +90,7 @@ const UserTable = ({ setValue }) => {
         console.log(err);
         throw new Error(err);
       });
-      console.log('res : ', response)
+    console.log('res : ', response)
     let data = response.data?.data?.users;
     console.log("hello");
     if (Array.isArray(data) && data.length > 0) {
@@ -144,6 +169,16 @@ const UserTable = ({ setValue }) => {
         sortable: false,
         editable: false,
       },
+      {
+        headerName: "Delete",
+        field: "delete",
+        cellRenderer: DeleteButton,
+        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
+        suppressFloatingFilterButton: true,
+        sortable: false,
+        editable: false,
+      },
       // {
       //   headerName: "Latest Plan",
       //   field: "plan",
@@ -204,7 +239,22 @@ const UserTable = ({ setValue }) => {
   );
 
   const onCellValueChanged = useCallback((params) => {
-    console.log("Cell value changed:", params);
+    try {
+      console.log("Cell value changed:", params);
+      const response = axios.put(`admin/user/${params.data.id}`, {
+        name: params.data.user,
+        email: params.data.email,
+        phone: params.data.phone,
+        countryCode: params.data.countrycode,
+      },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+
+    }
+    catch (err) {
+      console.log(err);
+    }
   }, []);
 
   return (
