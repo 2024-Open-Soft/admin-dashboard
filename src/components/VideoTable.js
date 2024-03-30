@@ -6,55 +6,26 @@ import { movieCertifications } from "../data";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import createToast from "../utils/createToast";
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { Button } from "@mui/material";
-
-
-const CompanyLogoRenderer = ({ value }) => (
-  <span
-    style={{
-      display: "flex",
-      alignItems: "center",
-    }}
-  >
-    {value && (
-      <img
-        alt=""
-        src={`https://www.ag-grid.com/example-assets/space-company-logos/${value.toLowerCase()}.png`}
-        style={{
-          width: "25px",
-          maxHeight: "50%",
-          marginRight: "12px",
-          filter: "brightness(1.1)",
-        }}
-      />
-    )}
-    <p
-      style={{
-        textOverflow: "ellipsis",
-        overflow: "hidden",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {value}
-    </p>
-  </span>
-);
 
 const DeleteButton = (value) => {
   const handleDelete = async (e) => {
+    console.log("vale : ", value);
     e.preventDefault();
     try {
-      const response = await axios.post(`admin/movie/${value?.data?.id}/delete`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const response = await axios.delete(
+        `admin/movie/${value?.data?.id}/${value?.colDef?.field}/delete`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
 
       console.log("response : ", response);
-      createToast("User Deleted Successfully", "success");
-    }
-    catch (err) {
+      createToast(`${value?.colDef?.field} Deleted Successfully`, "success");
+    } catch (err) {
       console.log(err);
-      if(err?.response?.data?.error === "Token Expired") {
+      if (err?.response?.data?.error === "Token Expired") {
         localStorage.removeItem("token");
         window.location.href = "/login";
       }
@@ -66,7 +37,7 @@ const DeleteButton = (value) => {
       onClick={handleDelete}
       sx={{ m: 0, width: "115%", mr: 10, ml: -1.5, mb: 0.5 }}
     >
-      <DeleteOutlineOutlinedIcon sx={{ color: "black"}}/>
+      <DeleteOutlineOutlinedIcon sx={{ color: "black" }} />
     </Button>
   );
 };
@@ -115,7 +86,7 @@ const VideoTable = () => {
       })
       .catch((err) => {
         console.log(err);
-        if(err?.response?.data?.error === "Token Expired") {
+        if (err?.response?.data?.error === "Token Expired") {
           localStorage.removeItem("token");
           window.location.href = "/login";
         }
@@ -184,6 +155,7 @@ const VideoTable = () => {
       {
         field: "date",
         valueFormatter: dateFormatter,
+        cellEditor: "agDateCellEditor",
       },
       // {
       //   field: "dislikes",
@@ -227,8 +199,41 @@ const VideoTable = () => {
       { field: "languages" },
 
       {
-        headerName: "Delete",
-        field: "delete",
+        headerName: "Delete Poster",
+        field: "poster",
+        cellRenderer: DeleteButton,
+        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
+        suppressFloatingFilterButton: true,
+        sortable: false,
+        editable: false,
+      },
+
+      {
+        headerName: "Delete Trailor",
+        field: "trailer",
+        cellRenderer: DeleteButton,
+        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
+        suppressFloatingFilterButton: true,
+        sortable: false,
+        editable: false,
+      },
+
+      {
+        headerName: "Delete Video",
+        field: "video",
+        cellRenderer: DeleteButton,
+        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
+        suppressFloatingFilterButton: true,
+        sortable: false,
+        editable: false,
+      },
+
+      {
+        headerName: "Delete Movie",
+        field: "movie",
         cellRenderer: DeleteButton,
         suppressHeaderMenuButton: true,
         suppressHeaderFilterButton: true,
@@ -274,22 +279,24 @@ const VideoTable = () => {
 
   const onCellValueChanged = useCallback(async (params) => {
     console.log("Cell value changed:", params);
-    try{
-      const response = axios.put(`/admin/movie/${params.data.id}`, params.data, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      }).then((res) => {
-        console.log("res : ", res);
-        createToast(res?.data?.message, "success");
-      }).catch((err) => {
-        console.log(err);
-        if(err?.response?.data?.error === "Token Expired") {
-          localStorage.removeItem("token");
-          window.location.href = "/login";
-        }
-        createToast(err?.response?.data?.error, "error");
-      });
-    }
-    catch(err){
+    try {
+      const response = axios
+        .put(`/admin/movie/${params.data.id}`, params.data, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        })
+        .then((res) => {
+          console.log("res : ", res);
+          createToast("Movie Updated", "success");
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err?.response?.data?.error === "Token Expired") {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+          }
+          createToast(err?.response?.data?.error, "error");
+        });
+    } catch (err) {
       console.log(err);
       createToast(err?.response?.data?.error, "error");
     }

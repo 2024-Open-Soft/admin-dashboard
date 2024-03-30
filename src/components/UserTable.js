@@ -24,6 +24,7 @@ const Subscriptionsdirect = (value) => {
         startDate,
         endDate,
         status: sub?.status,
+        planId: sub?.plan,
       };
     });
     dispatch(
@@ -271,8 +272,7 @@ const UserTable = ({ setValue }) => {
         )
         .then((response) => {
           console.log("response : ", response);
-          createToast(response?.data?.message, "success");
-          // window.location.reload();
+          createToast("User Updated", "success");
         })
         .catch((err) => {
           console.log(err);

@@ -158,6 +158,7 @@ const VideoUpload = () => {
       .post(`/admin/movie/${id}/tailer/upload`, formData, config)
       .then((res) => {
         console.log(res);
+        handlePosterFileSubmit(id);
         createToast(res?.data?.message, "success");
       })
       .catch((err) => {
@@ -183,8 +184,8 @@ const VideoUpload = () => {
       .post(`/admin/movie/${id}/upload`, formData, config)
       .then((res) => {
         console.log(res);
-        createToast(res?.data?.message, "success");
-        handleTrailerFileSubmit(id);
+        createToast("Movie file submitted", "success");
+        // handleTrailerFileSubmit(id);
       })
       .catch((err) => {
         console.log(err);
