@@ -57,7 +57,7 @@ const VideoUpload = () => {
   const Countries = useSelector((state) => state.country.data);
 
   const [moviefile, setMovieFile] = useState(null);
-  const [trailerfile, setTrilerFile] = useState(null);
+  const [trailerfile, setTrailerFile] = useState(null);
   const [posterfile, setPosterFile] = useState(null);
   const [error, setError] = useState("");
 
@@ -634,7 +634,7 @@ const VideoUpload = () => {
               component="label"
               role="button"
               variant="contained"
-              onChange={(e) => setTrilerFile(e.target.files[0])}
+              onChange={(e) => setTrailerFile(e.target.files[0])}
               accept="video/*"
               startIcon={<CloudUploadIcon />}
               type="file"
@@ -653,7 +653,7 @@ const VideoUpload = () => {
               component="label"
               role="button"
               variant="contained"
-              onChange={(e) => setTrilerFile(e.target.files[0])}
+              onChange={(e) => setPosterFile(e.target.files[0])}
               accept="image/*"
               startIcon={<CloudUploadIcon />}
               type="file"
