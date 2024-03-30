@@ -299,7 +299,7 @@ const VideoUpload = () => {
                 handleAutoCompleteChange(event, value, "rated")
               }
               options={movieCertifications}
-              getOptionLabel={(option) => option.title}
+              getOptionLabel={(option) => option.title || option.type}
               size="small"
               sx={{ mt: 1, mb: 2 }}
               renderInput={(params) => (
@@ -321,7 +321,7 @@ const VideoUpload = () => {
               limitTags={2}
               id="genres"
               options={genres}
-              getOptionLabel={(option) => option.title}
+              getOptionLabel={(option) => option.title || option.type}
               onChange={(event, value) =>
                 handleAutoCompleteChange(event, value, "genres")
               }
