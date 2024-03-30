@@ -19,6 +19,9 @@ import {
 } from "../data";
 import { useDispatch, useSelector } from "react-redux";
 import "./style.css";
+import axios from "axios";
+import { required } from ".///required";
+import { set } from "rsuite/esm/utils/dateUtils";
 
 const style = {
   form: { display: "flex", flexDirection: "column", p: 4 },
@@ -53,6 +56,11 @@ const VideoUpload = () => {
   const Countries = useSelector((state) => state.country.data);
 
   const [moviefile, setMovieFile] = useState(null);
+  const [trailerfile, setTrilerFile] = useState(null);
+  const [posterfile, setPosterFile] = useState(null);
+  const [error, setError] = useState("");
+
+  const [isRequired, setIsRequired] = useState(false);
 
   const [movieDetails, setMovieDetails] = useState({
     movieName: "",
@@ -88,8 +96,6 @@ const VideoUpload = () => {
   });
 
   const handleChange = (e) => {
-    console.log("e.target.id : ", e.target.id);
-    console.log("e.target.value : ", e.target.value);
     setMovieDetails({
       ...movieDetails,
       [e.target.id]: e.target.value,
@@ -103,22 +109,87 @@ const VideoUpload = () => {
     });
   };
 
-  const handleAutoCompleteChange = (event, value) => {
+  const handleAutoCompleteChange = (event, value, key) => {
     setMovieDetails({
       ...movieDetails,
-      movieCertification: value.map((item) => item),
+      [key]: value.map((item) => item),
     });
   };
 
   const handleFileChange = (event) => {
     setMovieFile(event.target.files[0]);
-    console.log(event.target.files[0]);
   };
 
-  const handleSubmit = (e) => {};
+  const handleTrailerFileSubmit = async (id) => {
+    const formData = new FormData();
+    formData.append("file", trailerfile);
+    const config = {
+      headers: {
+        "Content-type": "multipart/form-data",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+    await axios
+      .post(`/admin/movie/${id}/tailer/upload`, formData, config)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleMovieFileSubmit = async (id) => {
+    const formData = new FormData();
+    formData.append("file", moviefile);
+    const config = {
+      headers: {
+        "Content-type": "multipart/form-data",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+    await axios
+      .post(`/admin/movie/${id}/upload`, formData, config)
+      .then((res) => {
+        console.log(res);
+        handleTrailerFileSubmit(id);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("movieDetails : ", movieDetails);
+    const reqrd = required(movieDetails);
+
+    setIsRequired(reqrd);
+    if (reqrd) {
+      setError("All fields are required");
+      return;
+    } else if (!moviefile) {
+      setError("Please upload movie file");
+      return;
+    }
+    setError("");
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+    await axios
+      .post(`/admin/movie/upload`, { ...movieDetails }, config)
+      .then((res) => {
+        console.log(res);
+        handleMovieFileSubmit(res.data._id);
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div>
-      <Box component={"form"} onSubmit={handleSubmit} sx={style.form}>
+      <Box component={"form"} sx={style.form}>
+        <Typography variant="" sx={{ fontSize: "small", color: "red" }}>
+          {error}
+        </Typography>
         <Box
           component={"div"}
           sx={{ display: "flex", justifyContent: "space-between" }}
@@ -131,7 +202,7 @@ const VideoUpload = () => {
               margin="normal"
               size="small"
               onChange={handleChange}
-              required
+              //required
               fullWidth
               id="movieName"
               // label="Enter email"
@@ -148,7 +219,9 @@ const VideoUpload = () => {
               multiple
               limitTags={2}
               id="movieCertification"
-              onChange={handleAutoCompleteChange}
+              onChange={(event, value) =>
+                handleAutoCompleteChange(event, value, "movieCertification")
+              }
               options={movieCertifications}
               getOptionLabel={(option) => option.type}
               size="small"
@@ -173,7 +246,9 @@ const VideoUpload = () => {
               id="genre"
               options={genres}
               getOptionLabel={(option) => option.title}
-              onChange={handleAutoCompleteChange}
+              onChange={(event, value) =>
+                handleAutoCompleteChange(event, value, "genre")
+              }
               size="small"
               sx={{ mt: 1, mb: 2 }}
               renderInput={(params) => <TextField {...params} id="genre" />}
@@ -214,7 +289,9 @@ const VideoUpload = () => {
               id="country"
               options={Countries}
               getOptionLabel={(option) => option.title}
-              onChange={handleAutoCompleteChange}
+              onChange={(event, value) =>
+                handleAutoCompleteChange(event, value, "country")
+              }
               size="small"
               sx={{ mt: 1, mb: 2 }}
               renderInput={(params) => <TextField {...params} id="country" />}
@@ -254,7 +331,9 @@ const VideoUpload = () => {
               id="cinemaLanguage"
               options={cinemaLanguages}
               getOptionLabel={(option) => option.title}
-              onChange={handleAutoCompleteChange}
+              onChange={(event, value) =>
+                handleAutoCompleteChange(event, value, "cinemaLanguage")
+              }
               size="small"
               sx={{ mt: 1, mb: 2 }}
               renderInput={(params) => (
@@ -295,7 +374,9 @@ const VideoUpload = () => {
               limitTags={2}
               id="cinemaLanguage"
               options={cinemaLanguages}
-              onChange={handleAutoCompleteChange}
+              onChange={(event, value) =>
+                handleAutoCompleteChange(event, value, "cenimaLanguage")
+              }
               getOptionLabel={(option) => option.title}
               size="small"
               sx={{ mt: 1, mb: 2 }}
@@ -358,7 +439,7 @@ const VideoUpload = () => {
               <TextField
                 margin="normal"
                 size="small"
-                required
+                //required
                 fullWidth
                 id="imdbRating"
                 onChange={handleChange}
@@ -374,7 +455,7 @@ const VideoUpload = () => {
               </Typography>
               <TextField
                 margin="normal"
-                required
+                //required
                 fullWidth
                 size="small"
                 name="imdbVotes"
@@ -382,7 +463,7 @@ const VideoUpload = () => {
                 value={movieDetails.imdbVotes}
                 // label="Password"
                 type="number"
-                id="imdbvotes"
+                id="imdbVotes"
                 sx={{ mt: 1, mb: 2 }}
               />
             </Box>
@@ -402,7 +483,7 @@ const VideoUpload = () => {
               <TextField
                 margin="normal"
                 size="small"
-                required
+                //required
                 fullWidth
                 id="awardName"
                 onChange={handleChange}
@@ -418,15 +499,15 @@ const VideoUpload = () => {
               </Typography>
               <TextField
                 margin="normal"
-                required
+                //required
                 fullWidth
                 size="small"
+                id="totalAwards"
                 onChange={handleChange}
                 value={movieDetails.totalAwards}
                 name="totalAwards"
                 // label="Password"
                 type="number"
-                id="totalAwards"
                 sx={{ mt: 1, mb: 2 }}
               />
             </Box>
@@ -437,7 +518,7 @@ const VideoUpload = () => {
         </Typography>
         <TextField
           margin="normal"
-          required
+          //required
           fullWidth
           name="description"
           rows={3}
@@ -450,18 +531,44 @@ const VideoUpload = () => {
           sx={{ mt: 1, mb: 2 }}
         />
         <Box sx={style.buttonBox}>
-          <Button
-            component="label"
-            role="button"
-            variant="contained"
-            onChange={handleFileChange}
-            accept="video/*"
-            startIcon={<CloudUploadIcon />}
-          >
-            Upload file
-            <VisuallyHiddenInput type="file" />
-          </Button>
-          <Button type="submit" variant="contained">
+          {
+            <Button
+              component="label"
+              role="button"
+              variant="contained"
+              onChange={(e) => setMovieFile(e.target.files[0])}
+              accept="video/*"
+              startIcon={<CloudUploadIcon />}
+            >
+              Upload Movie
+              <VisuallyHiddenInput
+                type="file"
+                id="img"
+                name="img"
+                accept="video/*"
+              />
+            </Button>
+          }
+          {!required(movieDetails) && (
+            <Button
+              component="label"
+              role="button"
+              variant="contained"
+              onChange={(e) => setTrilerFile(e.target.files[0])}
+              accept="video/*"
+              startIcon={<CloudUploadIcon />}
+              type="file"
+            >
+              Upload Trailer
+              <VisuallyHiddenInput
+                type="file"
+                id="img"
+                name="img"
+                accept="video/*"
+              />
+            </Button>
+          )}
+          <Button type="submit" onClick={handleSubmit} variant="contained">
             Save
           </Button>
         </Box>

@@ -8,6 +8,7 @@ import {
 import React, { useState } from "react";
 import "./style.css";
 import axios from "axios";
+import { required } from "./required";
 
 const style = {
   form: {
@@ -46,12 +47,13 @@ const countryCodes = [
 ];
 
 const CreateUser = () => {
-  const [value, setValue] = React.useState({ code: "+91", country: "India" });
+  const [value, setValue] = React.useState({ code: "", country: "" });
+  const [error, setError] = useState("");
 
   const [userDetails, setUserDetails] = useState({
     email: "",
     countryCode: "",
-    phoneNumber: "",
+    phone: "",
     name: "",
     password: "",
     confirmPassword: "",
@@ -66,35 +68,40 @@ const CreateUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setUserDetails({ ...userDetails, countryCode: value.code });
-
-    if (userDetails.password !== userDetails.confirmPassword) {
-      alert("Passwords do not match");
+    // setUserDetails({ ...userDetails, countryCode: value.code });
+    console.log("userDetails: ", userDetails);
+    const reqrd = required(userDetails);
+    if (reqrd) {
+      setError("All fields are required");
       return;
     }
 
-    // remove confirmPassword from userDetails and create a new object
-    const newUser = { ...userDetails };
-    delete newUser.confirmPassword;
+    if (userDetails.password !== userDetails.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
 
-    // push the user to the database using post request v
     const headers = {
       "Content-type": "application/json",
-      "Authorization": `Bearer ${localStorage.getItem("token")}`,
-    }
-    // const response = await fetch("/admin/user", { method: "POST", headers, body: JSON.stringify(newUser) });
-    const response = await axios.post("/admin/user", newUser, { headers });
-    // console.log(response);
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    };
 
-    // clear the form
-    setUserDetails({
-      email: "",
-      countryCode: "",
-      phoneNumber: "",
-      name: "",
-      password: "",
-      confirmPassword: "",
-    });
+    await axios
+      .post("/admin/user", { ...userDetails }, { headers })
+      .then((res) => {
+        console.log(res);
+        setUserDetails({
+          email: "",
+          countryCode: "",
+          phone: "",
+          name: "",
+          password: "",
+          confirmPassword: "",
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -104,6 +111,9 @@ const CreateUser = () => {
       onSubmit={handleSubmit}
       sx={style.form}
     >
+      <Typography variant="" sx={{ fontSize: "small", color: "red" }}>
+        {error}
+      </Typography>
       <Typography variant="" sx={{ fontSize: "large" }}>
         Enter Phone Number
       </Typography>
@@ -114,7 +124,9 @@ const CreateUser = () => {
           getOptionLabel={(option) => option.code}
           sx={{ mt: 2, mb: 2 }}
           value={value}
-          onChange={(event, newValue) => { setValue(newValue); /*console.log(value)*/ }}
+          onChange={(event, newValue) => {
+            setValue(newValue);
+          }}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -130,12 +142,12 @@ const CreateUser = () => {
           margin="normal"
           required
           fullWidth
-          id="phoneNumber"
-          name="phoneNumber"
-          autoComplete="phoneNumber"
+          id="phone"
+          name="phone"
+          autoComplete="phone"
           type="number"
           placeholder="000 000 0000"
-          value={userDetails.phoneNumber}
+          value={userDetails.phone}
           onChange={handleChange}
         />
       </Box>
