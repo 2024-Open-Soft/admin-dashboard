@@ -137,8 +137,8 @@ const VideoUpload = () => {
     await axios
       .post(`/admin/movie/${id}/poster/upload`, formData, config)
       .then((res) => {
-        console.log(res);
-        createToast("Movie poster submitted", "success");
+        // console.log(res);
+        createToast(res?.data?.message || "Movie poster submitted", "success");
       })
       .catch((err) => {
         console.log(err);
@@ -157,7 +157,7 @@ const VideoUpload = () => {
     await axios
       .post(`/admin/movie/${id}/trailer/upload`, formData, config)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         handlePosterFileSubmit(id);
         createToast("Movie trailer submitted", "success");
       })
@@ -183,7 +183,7 @@ const VideoUpload = () => {
     await axios
       .post(`/admin/movie/${id}/upload`, formData, config)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         createToast("Movie file submitted", "success");
         handleTrailerFileSubmit(id);
       })
@@ -236,7 +236,7 @@ const VideoUpload = () => {
       )
       .then((res) => {
         // console.log(res);
-        createToast("Movie trailer submitted", "success");
+        createToast(res?.data?.message || "Movie trailer submitted", "success");
         handleMovieFileSubmit(res.data?.data?.movie?._id);
       })
       .catch((err) => {

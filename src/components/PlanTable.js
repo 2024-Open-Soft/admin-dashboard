@@ -47,7 +47,7 @@ const DeleteButton = (value) => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
-      console.log("response : ", response);
+      // console.log("response : ", response);
       createToast(response?.data?.message, "success");
     }
     catch (err) {
@@ -209,7 +209,7 @@ const PlanTable = () => {
 
   const onCellValueChanged = useCallback((params) => {
     try {
-      console.log("Cell value changed:", params);
+      // console.log("Cell value changed:", params);
       const response = axios.put(`admin/plan/${params.data.id}`, {
         name: params.data.plan,
         price: params.data.price,
@@ -221,7 +221,7 @@ const PlanTable = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       ).then((response) => {
-        console.log("response : ", response);
+        // console.log("response : ", response);
         createToast(response?.data?.message, "success");
       }).catch((err) => {
         console.log(err);

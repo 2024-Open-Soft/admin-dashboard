@@ -25,10 +25,10 @@ const Check = () => {
     name: "",
   });
   const userDataCheck = useSelector((state) => state.user.data);
-  console.log("userDataCheck : ", userDataCheck);
+  // console.log("userDataCheck : ", userDataCheck);
   const handleChange = (e) => {
-    console.log("e.target.id : ", e.target.id);
-    console.log("e.target.value : ", e.target.value);
+    // console.log("e.target.id : ", e.target.id);
+    // console.log("e.target.value : ", e.target.value);
     setUserDetails({
       ...userDetails,
       [e.target.id]: e.target.value,

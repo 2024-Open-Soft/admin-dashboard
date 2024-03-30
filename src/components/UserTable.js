@@ -54,7 +54,7 @@ const DeleteButton = (value) => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
-      console.log("response : ", response);
+      // console.log("response : ", response);
       createToast("User Deleted Successfully", "success");
     } catch (err) {
       console.log(err);
@@ -88,7 +88,7 @@ const UserTable = ({ setValue }) => {
   const [gridApi, setGridApi] = useState(null);
 
   const getAllUsers = async () => {
-    console.log("token : ", localStorage.getItem("token"));
+    // console.log("token : ", localStorage.getItem("token"));
     const response = await axios
       .get("/admin/user", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -102,9 +102,9 @@ const UserTable = ({ setValue }) => {
         }
         throw new Error(err);
       });
-    console.log("res : ", response);
+    // console.log("res : ", response);
     let data = response.data?.data?.users;
-    console.log("hello");
+    // console.log("hello");
     if (Array.isArray(data) && data.length > 0) {
       createToast(response?.data?.message, "success");
       return await data.map((user) => {
@@ -120,9 +120,9 @@ const UserTable = ({ setValue }) => {
         };
       });
     }
-    console.log("no no no");
-    console.log("data : ", data);
-    console.log("yes yes yes");
+    // console.log("no no no");
+    // console.log("data : ", data);
+    // console.log("yes yes yes");
     createToast(response?.data?.message, "success");
     return data;
   };
@@ -254,7 +254,7 @@ const UserTable = ({ setValue }) => {
 
   const onCellValueChanged = useCallback((params) => {
     try {
-      console.log("Cell value changed:", params);
+      // console.log("Cell value changed:", params);
       const response = axios
         .put(
           `admin/user/${params.data.id}`,
@@ -271,7 +271,7 @@ const UserTable = ({ setValue }) => {
           }
         )
         .then((response) => {
-          console.log("response : ", response);
+          // console.log("response : ", response);
           createToast("User Updated", "success");
         })
         .catch((err) => {

@@ -11,7 +11,7 @@ import { Button } from "@mui/material";
 
 const DeleteButton = (value) => {
   const handleDelete = async (e) => {
-    console.log("vale : ", value);
+    // console.log("vale : ", value);
     e.preventDefault();
     try {
       const response = await axios.delete(
@@ -21,7 +21,7 @@ const DeleteButton = (value) => {
         }
       );
 
-      console.log("response : ", response);
+      // console.log("response : ", response);
       createToast(`${value?.colDef?.field} Deleted Successfully`, "success");
     } catch (err) {
       console.log(err);
@@ -57,7 +57,7 @@ const VideoTable = () => {
   const [gridApi, setGridApi] = useState(null);
 
   const getAllMovies = async () => {
-    console.log("token : ", localStorage.getItem("token"));
+    // console.log("token : ", localStorage.getItem("token"));
     const response = await axios
       .get("/admin/movie", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -71,11 +71,11 @@ const VideoTable = () => {
         createToast(err?.response?.data?.error, "error");
         throw new Error(err);
       });
-    console.log("res : ", response);
+    // console.log("res : ", response);
     let data = response.data?.data?.movies || [];
-    console.log("hello");
+    // console.log("hello");
 
-    console.log("data : ", data);
+    // console.log("data : ", data);
 
     if (Array.isArray(data) && data.length > 0) {
       createToast(response?.data?.message, "success");
@@ -94,9 +94,9 @@ const VideoTable = () => {
         };
       });
     }
-    console.log("no no no");
-    console.log("data : ", data);
-    console.log("yes yes yes");
+    // console.log("no no no");
+    // console.log("data : ", data);
+    // console.log("yes yes yes");
     createToast(response?.data?.message, "error");
     return data;
   };
@@ -187,14 +187,14 @@ const VideoTable = () => {
   }, [gridApi]);
 
   const onCellValueChanged = useCallback(async (params) => {
-    console.log("Cell value changed:", params);
+    // console.log("Cell value changed:", params);
     try {
       const response = axios
         .put(`/admin/movie/${params.data.id}`, params.data, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         .then((res) => {
-          console.log("res : ", res);
+          // console.log("res : ", res);
           createToast("Movie Updated", "success");
         })
         .catch((err) => {
