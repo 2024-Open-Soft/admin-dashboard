@@ -54,6 +54,10 @@ const DeleteButton = (value) => {
     }
     catch (err) {
       console.log(err);
+      if(err?.response?.data?.error === "Token Expired") {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
       createToast(err?.response?.data?.error, "error");
     }
   };
@@ -111,6 +115,10 @@ const VideoTable = () => {
       })
       .catch((err) => {
         console.log(err);
+        if(err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
         createToast(err?.response?.data?.error, "error");
         throw new Error(err);
       });
@@ -274,6 +282,10 @@ const VideoTable = () => {
         createToast(res?.data?.message, "success");
       }).catch((err) => {
         console.log(err);
+        if(err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
         createToast(err?.response?.data?.error, "error");
       });
     }

@@ -113,6 +113,10 @@ const CreateUser = () => {
       .catch((err) => {
         // setError(err?.response?.data?.error);
         createToast(err?.response?.data?.error, "error");
+        if(err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
         console.log(err);
       });
   };

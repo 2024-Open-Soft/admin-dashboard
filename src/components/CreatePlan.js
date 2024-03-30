@@ -143,6 +143,10 @@ const CreatePlan = () => {
       })
       .catch((err) => {
         console.log(err);
+        if(err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
         createToast(err?.response?.data?.error)
       });
   };
