@@ -212,9 +212,13 @@ const PlanTable = () => {
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
-      );
-
-      createToast(response?.data?.message, "success");
+      ).then((response) => {
+        console.log("response : ", response);
+        createToast(response?.data?.message, "success");
+      }).catch((err) => {
+        console.log(err);
+        createToast(err?.response?.data?.error, "error");
+      });
     }
     catch (err) {
       createToast(err?.response?.data?.error, "error");

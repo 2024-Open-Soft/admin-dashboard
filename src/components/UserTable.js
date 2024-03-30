@@ -255,8 +255,13 @@ const UserTable = ({ setValue }) => {
       },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }).then((response) => {
+          console.log("response : ", response);
+          createToast(response?.data?.message, "success");
+        }).catch((err) => {
+          console.log(err);
+          createToast(err?.response?.data?.error, "error");
         });
-        createToast("User Updated Successfully", "success");
     }
     catch (err) {
       console.log(err);
