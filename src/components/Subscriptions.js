@@ -23,14 +23,14 @@ const Subscriptionsdirect = (value) => {
   );
 };
 
-// const dateFormatter = (params) => {
-//   return new Date(params.value).toLocaleDateString("en-us", {
-//     weekday: "long",
-//     year: "numeric",
-//     month: "short",
-//     day: "numeric",
-//   });
-// };
+const dateFormatter = (params) => {
+  return new Date(params.value).toLocaleDateString("en-us", {
+    weekday: "long",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
 
 const countryCodes = [
   { code: "+91", country: "India" },
@@ -75,32 +75,12 @@ const SubscriptionsTable = ({ setValue }) => {
       {
         headerName: "Start Date",
         field: "startDate",
-        valueFormatter: (params) => {
-          if (!params.value) {
-            return "";
-          }
-          const month = params.value.getMonth() + 1;
-          const day = params.value.getDate();
-          return `${params.value.getFullYear()}-${
-            month < 10 ? "0" + month : month
-          }-${day < 10 ? "0" + day : day}`;
-        },
-        cellEditor: "agDateCellEditor",
+        valueFormatter: dateFormatter,
       },
       {
         headerName: "End Date",
         field: "endDate",
-        valueFormatter: (params) => {
-          if (!params.value) {
-            return "";
-          }
-          const month = params.value.getMonth() + 1;
-          const day = params.value.getDate();
-          return `${params.value.getFullYear()}-${
-            month < 10 ? "0" + month : month
-          }-${day < 10 ? "0" + day : day}`;
-        },
-        cellEditor: "agDateCellEditor",
+        valueFormatter: dateFormatter,
       },
       {
         field: "status",

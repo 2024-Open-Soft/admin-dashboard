@@ -138,11 +138,11 @@ const VideoUpload = () => {
       .post(`/admin/movie/${id}/poster/upload`, formData, config)
       .then((res) => {
         console.log(res);
-        createToast(res?.data?.message, "success");
+        createToast("Movie poster submitted", "success");
       })
       .catch((err) => {
         console.log(err);
-        createToast(err?.response?.data?.message, "error");
+        createToast("Movie poster submission failed", "error");
       });
   };
   const handleTrailerFileSubmit = async (id) => {
@@ -155,11 +155,11 @@ const VideoUpload = () => {
       },
     };
     await axios
-      .post(`/admin/movie/${id}/tailer/upload`, formData, config)
+      .post(`/admin/movie/${id}/trailer/upload`, formData, config)
       .then((res) => {
         console.log(res);
         handlePosterFileSubmit(id);
-        createToast(res?.data?.message, "success");
+        createToast("Movie trailer submitted", "success");
       })
       .catch((err) => {
         console.log(err);
@@ -167,7 +167,7 @@ const VideoUpload = () => {
           localStorage.removeItem("token");
           window.location.href = "/login";
         }
-        createToast(err?.response?.data?.message, "error");
+        createToast("Movie trailer submission failed", "error");
       });
   };
 
@@ -185,7 +185,7 @@ const VideoUpload = () => {
       .then((res) => {
         console.log(res);
         createToast("Movie file submitted", "success");
-        // handleTrailerFileSubmit(id);
+        handleTrailerFileSubmit(id);
       })
       .catch((err) => {
         console.log(err);
@@ -193,25 +193,12 @@ const VideoUpload = () => {
           localStorage.removeItem("token");
           window.location.href = "/login";
         }
-        createToast(err?.response?.data?.message, "error");
+        createToast("Movie file submission failed", "error");
       });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("movieDetails : ", {
-      ...movieDetails,
-      imdb: {
-        id: Math.random(),
-        rating: movieDetails.imdbRating,
-        votes: movieDetails.imdbVotes,
-      },
-      awards: {
-        nominations: movieDetails.nominations,
-        text: movieDetails.awardName,
-        wins: movieDetails.totalAwards,
-      },
-    });
     const reqrd = required(movieDetails);
 
     setIsRequired(reqrd);
@@ -248,8 +235,8 @@ const VideoUpload = () => {
         config
       )
       .then((res) => {
-        console.log(res);
-        createToast(res?.data?.message, "success");
+        // console.log(res);
+        createToast("Movie trailer submitted", "success");
         handleMovieFileSubmit(res.data?.data?.movie?._id);
       })
       .catch((err) => {
@@ -258,7 +245,7 @@ const VideoUpload = () => {
           localStorage.removeItem("token");
           window.location.href = "/login";
         }
-        createToast(err?.response?.data?.message, "error");
+        createToast("Movie submission failed", "error");
       });
   };
 

@@ -42,28 +42,6 @@ const DeleteButton = (value) => {
   );
 };
 
-// const VideoImageRenderer = ({ value }) => (
-//   <span
-//     style={{
-//       display: "flex",
-//       justifyContent: "start",
-//       alignItems: "center",
-//     }}
-//   >
-//     <p
-//       style={{
-//         width: 150,
-//         height: 100,
-//         textOverflow: "ellipsis",
-//         overflow: "hidden",
-//         whiteSpace: "nowrap",
-//       }}
-//     >
-//       {value?.description || value}
-//     </p>
-//   </span>
-// );
-
 const dateFormatter = (params) => {
   return new Date(params.value).toLocaleDateString("en-us", {
     weekday: "long",
@@ -144,36 +122,10 @@ const VideoTable = () => {
         width: 350,
         cellEditor: "agLargeTextCellEditor",
       },
-      // {
-      //   field: "views",
-      //   width: 130,
-      //   cellEditor: "agNumberCellEditor",
-      //   cellEditorParams: {
-      //     min: 0,
-      //   },
-      // },
       {
         field: "date",
         valueFormatter: dateFormatter,
-        cellEditor: "agDateCellEditor",
       },
-      // {
-      //   field: "dislikes",
-      //   width: 125,
-      //   cellEditor: "agNumberCellEditor",
-      //   cellEditorParams: {
-      //     min: 0,
-      //   },
-      // },
-      // {
-      //   field: "price",
-      //   width: 130,
-      //   valueFormatter: (params) => `$${params.value.toLocaleString()}`,
-      //   cellEditor: "agNumberCellEditor",
-      //   cellEditorParams: {
-      //     min: 0,
-      //   },
-      // },
       {
         field: "rated",
         cellEditor: "agSelectCellEditor",
@@ -197,40 +149,6 @@ const VideoTable = () => {
         field: "IMDB",
       },
       { field: "languages" },
-
-      {
-        headerName: "Delete Poster",
-        field: "poster",
-        cellRenderer: DeleteButton,
-        suppressHeaderMenuButton: true,
-        suppressHeaderFilterButton: true,
-        suppressFloatingFilterButton: true,
-        sortable: false,
-        editable: false,
-      },
-
-      {
-        headerName: "Delete Trailor",
-        field: "trailer",
-        cellRenderer: DeleteButton,
-        suppressHeaderMenuButton: true,
-        suppressHeaderFilterButton: true,
-        suppressFloatingFilterButton: true,
-        sortable: false,
-        editable: false,
-      },
-
-      {
-        headerName: "Delete Video",
-        field: "video",
-        cellRenderer: DeleteButton,
-        suppressHeaderMenuButton: true,
-        suppressHeaderFilterButton: true,
-        suppressFloatingFilterButton: true,
-        sortable: false,
-        editable: false,
-      },
-
       {
         headerName: "Delete Movie",
         field: "movie",
@@ -241,23 +159,9 @@ const VideoTable = () => {
         sortable: false,
         editable: false,
       },
-      // {
-      //   field: "description",
-      //   cellEditor: "agLargeTextCellEditor",
-      //   cellEditorPopup: true,
-      //   cellEditorParams: {
-      //     maxLength: 100,
-      //   },
-      // },
     ],
     []
   );
-
-  // useEffect(() => {
-  //   fetch("https://www.ag-grid.com/example-assets/space-mission-data.json")
-  //     .then((result) => result.json())
-  //     .then((rowData) => setRowData(rowData));
-  // }, []);
 
   const onSelectionChanged = useCallback(() => {
     const selectedNodes = gridApi.getSelectedRows();
@@ -276,6 +180,11 @@ const VideoTable = () => {
     }),
     []
   );
+
+  const onPaginationChanged = useCallback(() => {
+    // const currentPage = gridApi.paginationGetCurrentPage() + 1;
+    // console.log("Current Page:", currentPage);
+  }, [gridApi]);
 
   const onCellValueChanged = useCallback(async (params) => {
     console.log("Cell value changed:", params);
@@ -313,6 +222,7 @@ const VideoTable = () => {
         onSelectionChanged={onSelectionChanged}
         pagination={true}
         onCellValueChanged={onCellValueChanged}
+        onPaginationChanged={onPaginationChanged}
       />
       <p>Selected Rows Count: {selectedRows.length}</p>
     </div>
