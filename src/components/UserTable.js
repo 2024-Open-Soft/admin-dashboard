@@ -8,6 +8,8 @@ import { Button } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { setUserSubscription } from "../redux/reducers/UserSubscription";
 import { subscriptionstartAndEndDate } from "./utility";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import createToast from "../utils/createToast";
 
 const Subscriptionsdirect = (value) => {
   const dispatch = useDispatch();
@@ -22,6 +24,7 @@ const Subscriptionsdirect = (value) => {
         startDate,
         endDate,
         status: sub?.status,
+        planId: sub?.plan,
       };
     });
     dispatch(
@@ -39,6 +42,35 @@ const Subscriptionsdirect = (value) => {
       sx={{ m: 0, width: "115%", mr: 10, ml: -1.5, mb: 0.5 }}
     >
       View
+    </Button>
+  );
+};
+
+const DeleteButton = (value) => {
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.delete(`admin/user/${value?.data?.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+
+      console.log("response : ", response);
+      createToast("User Deleted Successfully", "success");
+    } catch (err) {
+      console.log(err);
+      if (err?.response?.data?.error === "Token Expired") {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
+      createToast(err?.response?.data?.error, "error");
+    }
+  };
+  return (
+    <Button
+      onClick={handleDelete}
+      sx={{ m: 0, width: "115%", mr: 10, ml: -1.5, mb: 0.5 }}
+    >
+      <DeleteOutlineOutlinedIcon sx={{ color: "black" }} />
     </Button>
   );
 };
@@ -63,12 +95,18 @@ const UserTable = ({ setValue }) => {
       })
       .catch((err) => {
         console.log(err);
+        createToast(err?.response?.data?.error, "error");
+        if (err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
         throw new Error(err);
       });
-      console.log('res : ', response)
+    console.log("res : ", response);
     let data = response.data?.data?.users;
     console.log("hello");
     if (Array.isArray(data) && data.length > 0) {
+      createToast(response?.data?.message, "success");
       return await data.map((user) => {
         return {
           id: user?._id,
@@ -85,6 +123,7 @@ const UserTable = ({ setValue }) => {
     console.log("no no no");
     console.log("data : ", data);
     console.log("yes yes yes");
+    createToast(response?.data?.message, "success");
     return data;
   };
 
@@ -138,6 +177,16 @@ const UserTable = ({ setValue }) => {
         headerName: "Subscriptions",
         field: "subscriptions",
         cellRenderer: Subscriptionsdirect,
+        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
+        suppressFloatingFilterButton: true,
+        sortable: false,
+        editable: false,
+      },
+      {
+        headerName: "Delete",
+        field: "delete",
+        cellRenderer: DeleteButton,
         suppressHeaderMenuButton: true,
         suppressHeaderFilterButton: true,
         suppressFloatingFilterButton: true,
@@ -204,7 +253,39 @@ const UserTable = ({ setValue }) => {
   );
 
   const onCellValueChanged = useCallback((params) => {
-    console.log("Cell value changed:", params);
+    try {
+      console.log("Cell value changed:", params);
+      const response = axios
+        .put(
+          `admin/user/${params.data.id}`,
+          {
+            name: params.data.user,
+            email: params.data.email,
+            phone: params.data.phone,
+            countryCode: params.data.countrycode,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log("response : ", response);
+          createToast("User Updated", "success");
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err?.response?.data?.error === "Token Expired") {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+          }
+          createToast(err?.response?.data?.error, "error");
+        });
+    } catch (err) {
+      console.log(err);
+      createToast(err?.response?.data?.error, "error");
+    }
   }, []);
 
   return (

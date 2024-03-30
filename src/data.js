@@ -62,6 +62,17 @@ export const genres = [
 // common	"ኤርትራ"
 
 export const movieCertifications = [
+  { type: "TV-G", description: "General Audiences" },
+  { type: "PASSED", description: "Passed" },
+  { type: "TV-Y", description: "All Children" },
+  { type: "TV-Y7", description: "Directed to Older Children" },
+  {
+    type: "TV-Y7-FV",
+    description: "Directed to Older Children - Fantasy Violence",
+  },
+  { type: "TV-PG", description: "Parental Guidance Suggested" },
+  { type: "TV-14", description: "Parents Strongly Cautioned" },
+  { type: "TV-MA", description: "Mature Audience Only" },
   { type: "G", description: "General Audiences" },
   { type: "PG", description: "Parental Guidance Suggested" },
   { type: "PG-13", description: "Parents Strongly Cautioned" },

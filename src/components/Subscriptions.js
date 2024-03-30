@@ -4,6 +4,8 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import createToast from "../utils/createToast";
 
 const Subscriptionsdirect = (value) => {
   const dispatch = useDispatch();
@@ -21,14 +23,14 @@ const Subscriptionsdirect = (value) => {
   );
 };
 
-const dateFormatter = (params) => {
-  return new Date(params.value).toLocaleDateString("en-us", {
-    weekday: "long",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
+// const dateFormatter = (params) => {
+//   return new Date(params.value).toLocaleDateString("en-us", {
+//     weekday: "long",
+//     year: "numeric",
+//     month: "short",
+//     day: "numeric",
+//   });
+// };
 
 const countryCodes = [
   { code: "+91", country: "India" },
@@ -41,9 +43,10 @@ const countryCodes = [
 const SubscriptionsTable = ({ setValue }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [gridApi, setGridApi] = useState(null);
-  const subs = useSelector(
-    (state) => state.usersubscription.data
-  )?.subscriptions;
+  const anotherdata = useSelector((state) => state.usersubscription.data);
+  const subs = anotherdata?.subscriptions;
+
+  console.log("another : ", anotherdata);
 
   const [userSubscription, setUserSubscription] = useState();
 
@@ -55,6 +58,7 @@ const SubscriptionsTable = ({ setValue }) => {
         endDate: sub?.endDate,
         status: sub?.status,
         subscriptions: sub,
+        id: sub?.planId,
       };
     });
     setUserSubscription(parseData);
@@ -71,12 +75,32 @@ const SubscriptionsTable = ({ setValue }) => {
       {
         headerName: "Start Date",
         field: "startDate",
-        valueFormatter: dateFormatter,
+        valueFormatter: (params) => {
+          if (!params.value) {
+            return "";
+          }
+          const month = params.value.getMonth() + 1;
+          const day = params.value.getDate();
+          return `${params.value.getFullYear()}-${
+            month < 10 ? "0" + month : month
+          }-${day < 10 ? "0" + day : day}`;
+        },
+        cellEditor: "agDateCellEditor",
       },
       {
         headerName: "End Date",
         field: "endDate",
-        valueFormatter: dateFormatter,
+        valueFormatter: (params) => {
+          if (!params.value) {
+            return "";
+          }
+          const month = params.value.getMonth() + 1;
+          const day = params.value.getDate();
+          return `${params.value.getFullYear()}-${
+            month < 10 ? "0" + month : month
+          }-${day < 10 ? "0" + day : day}`;
+        },
+        cellEditor: "agDateCellEditor",
       },
       {
         field: "status",
@@ -124,7 +148,40 @@ const SubscriptionsTable = ({ setValue }) => {
   );
 
   const onCellValueChanged = useCallback((params) => {
-    console.log("Cell value changed:", params);
+    console.log("Cell value changed:", params.data);
+    try {
+      console.log("Cell value changed:", params);
+      const response = axios
+        .put(
+          `admin/user/${anotherdata.id}`,
+          {
+            subscriptions: [
+              ...subs.filter((sub) => sub?.planId !== params.data.id),
+              params.data,
+            ],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log("response : ", response);
+          createToast("Subscription Updated", "success");
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err?.response?.data?.error === "Token Expired") {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+          }
+          createToast(err?.response?.data?.error, "error");
+        });
+    } catch (err) {
+      console.log(err);
+      createToast(err?.response?.data?.error, "error");
+    }
   }, []);
 
   return (

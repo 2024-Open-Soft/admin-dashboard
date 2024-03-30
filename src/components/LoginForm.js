@@ -5,6 +5,9 @@ import { Autocomplete, Box, Typography } from "@mui/material";
 import axios from "axios";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
+import createToast from "../utils/createToast";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/reducers/User";
 
 const style = {
   h1: {
@@ -56,6 +59,7 @@ const LoginForm = () => {
   });
   const [countryCode, setCountryCode] = React.useState("+91");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (event) => {
     setUserDetails({
@@ -72,11 +76,26 @@ const LoginForm = () => {
         phoneNumber: countryCode.code + userDetails.phoneNumber,
       })
       .catch((err) => {
+        createToast(err?.response?.data?.error, "error");
+        if(err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
         console.log(err);
       });
-    localStorage.setItem("token", response?.data?.data?.token);
-    localStorage.setItem("user", JSON.stringify(response?.data?.data?.user));
+    if (response?.data?.data?.token)
+      localStorage.setItem("token", response?.data?.data?.token);
+    else localStorage.removeItem("token");
+
+    if (response?.data?.data?.user)
+      localStorage.setItem("user", JSON.stringify(response?.data?.data?.user));
+    else {
+      localStorage.removeItem("user");
+      dispatch(setUser({ data: null }));
+    }
+
     if (response?.data?.data?.user) {
+      createToast(response?.data?.message, "success");
       navigate("/");
     }
   };

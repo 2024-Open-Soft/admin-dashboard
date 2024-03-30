@@ -9,6 +9,7 @@ import React, { useState } from "react";
 import "./style.css";
 import axios from "axios";
 import { required } from "./required";
+import createToast from "../utils/createToast";
 
 const style = {
   form: {
@@ -66,6 +67,15 @@ const CreateUser = () => {
     });
   };
 
+  const handleCountryCodeChange = (value) => {
+    // console.log("e.target.value: ", e.target.value);
+    console.log("value: ", value);
+    setUserDetails({
+      ...userDetails,
+      countryCode: value,
+    });
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     // setUserDetails({ ...userDetails, countryCode: value.code });
@@ -87,9 +97,10 @@ const CreateUser = () => {
     };
 
     await axios
-      .post("/admin/user", { ...userDetails }, { headers })
+      .post("/admin/user", { ...userDetails, phoneNumber: userDetails.phone }, { headers })
       .then((res) => {
         console.log(res);
+        createToast(res?.data?.message, "success");
         setUserDetails({
           email: "",
           countryCode: "",
@@ -100,6 +111,12 @@ const CreateUser = () => {
         });
       })
       .catch((err) => {
+        // setError(err?.response?.data?.error);
+        createToast(err?.response?.data?.error, "error");
+        if(err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
         console.log(err);
       });
   };
@@ -126,6 +143,7 @@ const CreateUser = () => {
           value={value}
           onChange={(event, newValue) => {
             setValue(newValue);
+            handleCountryCodeChange(newValue.code)
           }}
           renderInput={(params) => (
             <TextField
@@ -134,6 +152,7 @@ const CreateUser = () => {
               name="countryCode"
               placeholder="+91"
               variant="outlined"
+              onChange={handleCountryCodeChange}
             />
           )}
           disableClearable

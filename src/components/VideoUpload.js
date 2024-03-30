@@ -22,6 +22,7 @@ import "./style.css";
 import axios from "axios";
 import { required } from ".///required";
 import { set } from "rsuite/esm/utils/dateUtils";
+import createToast from "../utils/createToast";
 
 const style = {
   form: { display: "flex", flexDirection: "column", p: 4 },
@@ -63,36 +64,38 @@ const VideoUpload = () => {
   const [isRequired, setIsRequired] = useState(false);
 
   const [movieDetails, setMovieDetails] = useState({
-    movieName: "",
-    movieCertification: [
+    title: "",
+    rated: [
       {
         title: "",
       },
     ],
-    genre: [
+    genres: [
       {
         title: "",
       },
     ],
     cast: "",
-    country: [
+    countries: [
       {
         title: "",
       },
     ],
-    director: "",
-    language: [
+    directors: "",
+    languages: [
       {
         title: "",
       },
     ],
     writer: "",
-    releasedDate: "",
+    released: "",
     imdbRating: "",
     imdbVotes: "",
     awardName: "",
     totalAwards: "",
-    description: "",
+    plot: "",
+    runtime: "",
+    nominations: "",
   });
 
   const handleChange = (e) => {
@@ -112,7 +115,9 @@ const VideoUpload = () => {
   const handleAutoCompleteChange = (event, value, key) => {
     setMovieDetails({
       ...movieDetails,
-      [key]: value.map((item) => item),
+      [key]: Array.isArray(value)
+        ? value.map((item) => item.title || item.type || item)
+        : value.title || value.type || value,
     });
   };
 
@@ -120,6 +125,26 @@ const VideoUpload = () => {
     setMovieFile(event.target.files[0]);
   };
 
+  const handlePosterFileSubmit = async (id) => {
+    const formData = new FormData();
+    formData.append("file", posterfile);
+    const config = {
+      headers: {
+        "Content-type": "multipart/form-data",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+    await axios
+      .post(`/admin/movie/${id}/poster/upload`, formData, config)
+      .then((res) => {
+        console.log(res);
+        createToast(res?.data?.message, "success");
+      })
+      .catch((err) => {
+        console.log(err);
+        createToast(err?.response?.data?.message, "error");
+      });
+  };
   const handleTrailerFileSubmit = async (id) => {
     const formData = new FormData();
     formData.append("file", trailerfile);
@@ -133,8 +158,17 @@ const VideoUpload = () => {
       .post(`/admin/movie/${id}/tailer/upload`, formData, config)
       .then((res) => {
         console.log(res);
+        handlePosterFileSubmit(id);
+        createToast(res?.data?.message, "success");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        if (err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
+        createToast(err?.response?.data?.message, "error");
+      });
   };
 
   const handleMovieFileSubmit = async (id) => {
@@ -150,14 +184,34 @@ const VideoUpload = () => {
       .post(`/admin/movie/${id}/upload`, formData, config)
       .then((res) => {
         console.log(res);
-        handleTrailerFileSubmit(id);
+        createToast("Movie file submitted", "success");
+        // handleTrailerFileSubmit(id);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        if (err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
+        createToast(err?.response?.data?.message, "error");
+      });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("movieDetails : ", movieDetails);
+    console.log("movieDetails : ", {
+      ...movieDetails,
+      imdb: {
+        id: Math.random(),
+        rating: movieDetails.imdbRating,
+        votes: movieDetails.imdbVotes,
+      },
+      awards: {
+        nominations: movieDetails.nominations,
+        text: movieDetails.awardName,
+        wins: movieDetails.totalAwards,
+      },
+    });
     const reqrd = required(movieDetails);
 
     setIsRequired(reqrd);
@@ -176,12 +230,36 @@ const VideoUpload = () => {
       },
     };
     await axios
-      .post(`/admin/movie/upload`, { ...movieDetails }, config)
+      .post(
+        `/admin/movie/upload`,
+        {
+          ...movieDetails,
+          imdb: {
+            id: Math.random(),
+            rating: movieDetails.imdbRating,
+            votes: movieDetails.imdbVotes,
+          },
+          awards: {
+            nominations: movieDetails.nominations,
+            text: movieDetails.awardName,
+            wins: movieDetails.totalAwards,
+          },
+        },
+        config
+      )
       .then((res) => {
         console.log(res);
-        handleMovieFileSubmit(res.data._id);
+        createToast(res?.data?.message, "success");
+        handleMovieFileSubmit(res.data?.data?.movie?._id);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        if (err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
+        createToast(err?.response?.data?.message, "error");
+      });
   };
 
   return (
@@ -204,10 +282,10 @@ const VideoUpload = () => {
               onChange={handleChange}
               //required
               fullWidth
-              id="movieName"
+              id="title"
               // label="Enter email"
-              value={movieDetails.movieName}
-              name="movieName"
+              value={movieDetails.title}
+              name="title"
               sx={{ mt: 1, mb: 2 }}
             />
           </Box>
@@ -216,14 +294,13 @@ const VideoUpload = () => {
               Movie Certification
             </Typography>
             <Autocomplete
-              multiple
               limitTags={2}
-              id="movieCertification"
+              id="rated"
               onChange={(event, value) =>
-                handleAutoCompleteChange(event, value, "movieCertification")
+                handleAutoCompleteChange(event, value, "rated")
               }
               options={movieCertifications}
-              getOptionLabel={(option) => option.type}
+              getOptionLabel={(option) => option.title || option.type}
               size="small"
               sx={{ mt: 1, mb: 2 }}
               renderInput={(params) => (
@@ -243,15 +320,15 @@ const VideoUpload = () => {
             <Autocomplete
               multiple
               limitTags={2}
-              id="genre"
+              id="genres"
               options={genres}
-              getOptionLabel={(option) => option.title}
+              getOptionLabel={(option) => option.title || option.type}
               onChange={(event, value) =>
-                handleAutoCompleteChange(event, value, "genre")
+                handleAutoCompleteChange(event, value, "genres")
               }
               size="small"
               sx={{ mt: 1, mb: 2 }}
-              renderInput={(params) => <TextField {...params} id="genre" />}
+              renderInput={(params) => <TextField {...params} id="genres" />}
             />
           </Box>
           <Box sx={style.boxStyle}>
@@ -286,15 +363,15 @@ const VideoUpload = () => {
               multiple
               limitTags={2}
               onOpen={() => countries(dispatch)}
-              id="country"
+              id="countries"
               options={Countries}
               getOptionLabel={(option) => option.title}
               onChange={(event, value) =>
-                handleAutoCompleteChange(event, value, "country")
+                handleAutoCompleteChange(event, value, "countries")
               }
               size="small"
               sx={{ mt: 1, mb: 2 }}
-              renderInput={(params) => <TextField {...params} id="country" />}
+              renderInput={(params) => <TextField {...params} id="countries" />}
             />
           </Box>
           <Box sx={style.boxStyle}>
@@ -309,9 +386,9 @@ const VideoUpload = () => {
                 marginTop: "0.5rem",
                 marginBottom: "1rem",
               }}
-              onChange={(value) => handleTagInputChange(value, "director")}
-              value={movieDetails.director}
-              id="director"
+              onChange={(value) => handleTagInputChange(value, "directors")}
+              value={movieDetails.directors}
+              id="directors"
               menuStyle={{ width: "100%" }}
               size="lg"
             />
@@ -328,16 +405,16 @@ const VideoUpload = () => {
             <Autocomplete
               multiple
               limitTags={2}
-              id="cinemaLanguage"
+              id="languages"
               options={cinemaLanguages}
               getOptionLabel={(option) => option.title}
               onChange={(event, value) =>
-                handleAutoCompleteChange(event, value, "cinemaLanguage")
+                handleAutoCompleteChange(event, value, "languages")
               }
               size="small"
               sx={{ mt: 1, mb: 2 }}
               renderInput={(params) => (
-                <TextField {...params} id="cinemaLanguage " />
+                <TextField {...params} id="languages " />
               )}
             />
           </Box>
@@ -367,22 +444,20 @@ const VideoUpload = () => {
         >
           <Box sx={style.boxStyle}>
             <Typography variant="" sx={{ fontSize: "large" }}>
-              Select Language
+              RunTime (in min)
             </Typography>
-            <Autocomplete
-              multiple
-              limitTags={2}
-              id="cinemaLanguage"
-              options={cinemaLanguages}
-              onChange={(event, value) =>
-                handleAutoCompleteChange(event, value, "cenimaLanguage")
-              }
-              getOptionLabel={(option) => option.title}
+            <TextField
+              margin="normal"
               size="small"
+              onChange={handleChange}
+              //required
+              fullWidth
+              id="runtime"
+              type="number"
+              // label="Enter email"
+              value={movieDetails.runtime}
+              name="runtime"
               sx={{ mt: 1, mb: 2 }}
-              renderInput={(params) => (
-                <TextField {...params} id="cinemaLanguage " />
-              )}
             />
           </Box>
           <Box sx={style.boxStyle}>
@@ -397,7 +472,7 @@ const VideoUpload = () => {
                 marginTop: "0.5rem",
                 marginBottom: "1rem",
               }}
-              onChange={(value) => handleTagInputChange(value, "releasedDate")}
+              onChange={(value) => handleTagInputChange(value, "released")}
               id="released"
               size="lg"
             />
@@ -513,6 +588,24 @@ const VideoUpload = () => {
             </Box>
           </Box>
         </Box>
+        <Box sx={style.boxStyle}>
+          <Typography variant="" sx={{ fontSize: "midium" }}>
+            Total Nominations
+          </Typography>
+          <TextField
+            margin="normal"
+            size="small"
+            //required
+            fullWidth
+            type="number"
+            id="nominations"
+            onChange={handleChange}
+            value={movieDetails.nominations}
+            // label="Enter email"
+            name="nominations"
+            sx={{ mt: 1, mb: 2 }}
+          />
+        </Box>
         <Typography variant="" sx={{ fontSize: "large" }}>
           Description
         </Typography>
@@ -520,18 +613,18 @@ const VideoUpload = () => {
           margin="normal"
           //required
           fullWidth
-          name="description"
+          name="plot"
           rows={3}
           multiline
           onChange={handleChange}
-          value={movieDetails.description}
+          value={movieDetails.plot}
           // label="Password"
           type="text"
-          id="description"
+          id="plot"
           sx={{ mt: 1, mb: 2 }}
         />
         <Box sx={style.buttonBox}>
-          {
+          {!required(movieDetails) && (
             <Button
               component="label"
               role="button"
@@ -548,7 +641,7 @@ const VideoUpload = () => {
                 accept="video/*"
               />
             </Button>
-          }
+          )}
           {!required(movieDetails) && (
             <Button
               component="label"
@@ -565,6 +658,25 @@ const VideoUpload = () => {
                 id="img"
                 name="img"
                 accept="video/*"
+              />
+            </Button>
+          )}
+          {!required(movieDetails) && (
+            <Button
+              component="label"
+              role="button"
+              variant="contained"
+              onChange={(e) => setTrilerFile(e.target.files[0])}
+              accept="image/*"
+              startIcon={<CloudUploadIcon />}
+              type="file"
+            >
+              Upload Poster
+              <VisuallyHiddenInput
+                type="file"
+                id="img"
+                name="img"
+                accept="image/*"
               />
             </Button>
           )}
