@@ -77,6 +77,10 @@ const LoginForm = () => {
       })
       .catch((err) => {
         createToast(err?.response?.data?.error, "error");
+        if(err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
         console.log(err);
       });
     if (response?.data?.data?.token)

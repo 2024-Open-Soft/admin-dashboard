@@ -52,6 +52,10 @@ const DeleteButton = (value) => {
     }
     catch (err) {
       console.log(err);
+      if(err?.response?.data?.error === "Token Expired") {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
       createToast(err?.response?.data?.error, "error");
     }
   };
@@ -78,6 +82,10 @@ const PlanTable = () => {
       .catch((err) => {
         console.log(err);
         createToast(err?.response?.data?.error, "error");
+        if(err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
         throw new Error(err);
       });
     let data = response?.data;
@@ -212,9 +220,17 @@ const PlanTable = () => {
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
-      );
-
-      createToast(response?.data?.message, "success");
+      ).then((response) => {
+        console.log("response : ", response);
+        createToast(response?.data?.message, "success");
+      }).catch((err) => {
+        console.log(err);
+        if(err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
+        createToast(err?.response?.data?.error, "error");
+      });
     }
     catch (err) {
       createToast(err?.response?.data?.error, "error");

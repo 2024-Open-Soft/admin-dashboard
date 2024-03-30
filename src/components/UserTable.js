@@ -58,6 +58,10 @@ const DeleteButton = (value) => {
     }
     catch (err) {
       console.log(err);
+      if(err?.response?.data?.error === "Token Expired") {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
       createToast(err?.response?.data?.error, "error");
     }
   };
@@ -92,6 +96,10 @@ const UserTable = ({ setValue }) => {
       .catch((err) => {
         console.log(err);
         createToast(err?.response?.data?.error, "error");
+        if(err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
         throw new Error(err);
       });
     console.log('res : ', response)
@@ -255,8 +263,17 @@ const UserTable = ({ setValue }) => {
       },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }).then((response) => {
+          console.log("response : ", response);
+          createToast(response?.data?.message, "success");
+        }).catch((err) => {
+          console.log(err);
+          if(err?.response?.data?.error === "Token Expired") {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+          }
+          createToast(err?.response?.data?.error, "error");
         });
-        createToast("User Updated Successfully", "success");
     }
     catch (err) {
       console.log(err);

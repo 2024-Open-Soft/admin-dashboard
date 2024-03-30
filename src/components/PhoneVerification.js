@@ -39,6 +39,10 @@ const VerificationPhone = ({ setStep }) => {
       createToast(response?.data?.message, "success")
     } catch (err) {
       console.log(err);
+      if(err?.response?.data?.error === "Token Expired") {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
       createToast(err?.response?.data?.error, "error")
     }
   };
@@ -63,6 +67,11 @@ const VerificationPhone = ({ setStep }) => {
       localStorage.setItem("token", response.data.data.token);
       createToast(response?.data?.message, "success")
     } catch (err) {
+      if(err?.response?.data?.error === "Token Expired") {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
+      createToast(err?.response?.data?.error, "error")
       console.log(err);
     }
 
