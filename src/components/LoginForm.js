@@ -7,6 +7,7 @@ import "./style.css";
 import { useNavigate } from "react-router-dom";
 import createToast from "../utils/createToast";
 import { useDispatch } from "react-redux";
+import { setUser } from "../redux/reducers/User";
 
 const style = {
   h1: {
@@ -80,14 +81,13 @@ const LoginForm = () => {
       });
     if (response?.data?.data?.token)
       localStorage.setItem("token", response?.data?.data?.token);
-    else
-      localStorage.removeItem("token");
+    else localStorage.removeItem("token");
 
     if (response?.data?.data?.user)
       localStorage.setItem("user", JSON.stringify(response?.data?.data?.user));
-    else{
+    else {
       localStorage.removeItem("user");
-      dispatch({ type: "LOGOUT" });    
+      dispatch(setUser({ data: null }));
     }
 
     if (response?.data?.data?.user) {

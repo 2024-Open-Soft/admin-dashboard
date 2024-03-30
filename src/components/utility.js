@@ -1,3 +1,7 @@
+import axios from "axios";
+import { setUser } from "../redux/reducers/User";
+import createToast from "../utils/createToast";
+
 export const findSubscriptionStatus = (plans) => {
   const currentDate = new Date();
 
@@ -38,4 +42,26 @@ export const subscriptionstartAndEndDate = (plan) => {
   );
 
   return { startDate: startDateObj, endDate };
+};
+
+export const logout = async (dispatch) => {
+  try {
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    };
+
+    const response = await axios.get("/user/logout", config);
+    dispatch(setUser(null));
+    localStorage.removeItem("token");
+    createToast("Logged out successfully", "success");
+    return response;
+  } catch (error) {
+    if (error?.response?.data?.error?.startsWith("Token expired"))
+      localStorage.removeItem("token");
+    createToast(error?.response?.data?.error, "error");
+    console.log(error?.response?.data?.error);
+  }
 };

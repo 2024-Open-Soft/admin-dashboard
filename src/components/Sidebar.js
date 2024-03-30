@@ -10,8 +10,10 @@ import BackupIcon from "@mui/icons-material/Backup";
 import Divider from "@mui/material/Divider";
 import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import { Avatar, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { logout } from "./utility";
 
 const boxStyle = {
   display: "flex",
@@ -32,6 +34,14 @@ const linkStyle = {
 
 export default function Sidebar() {
   const user = useSelector((state) => state.user.data);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout(dispatch);
+    navigate("/");
+  };
 
   return (
     <Box
@@ -80,6 +90,16 @@ export default function Sidebar() {
             </ListItemButton>
           </ListItem>
         </Link>
+        {(user || user?.data) && (
+          <ListItem sx={linkStyle} disablePadding>
+            <ListItemButton onClick={handleLogout}>
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary="Logout" />
+            </ListItemButton>
+          </ListItem>
+        )}
       </List>
     </Box>
   );

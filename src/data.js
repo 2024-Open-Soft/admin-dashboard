@@ -62,11 +62,11 @@ export const genres = [
 // common	"ኤርትራ"
 
 export const movieCertifications = [
-  { type: "G", description: "General Audiences" },
-  { type: "PG", description: "Parental Guidance Suggested" },
-  { type: "PG-13", description: "Parents Strongly Cautioned" },
-  { type: "R", description: "Restricted" },
-  { type: "NC-17", description: "Adults Only" },
+  { title: "G", description: "General Audiences" },
+  { title: "PG", description: "Parental Guidance Suggested" },
+  { title: "PG-13", description: "Parents Strongly Cautioned" },
+  { title: "R", description: "Restricted" },
+  { title: "NC-17", description: "Adults Only" },
 ];
 
 export const cinemaLanguages = [
