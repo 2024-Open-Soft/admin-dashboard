@@ -4,6 +4,9 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import { Button } from "@mui/material";
+import createToast from "../utils/createToast";
 
 const CompanyLogoRenderer = ({ value }) => (
   <span
@@ -36,6 +39,36 @@ const CompanyLogoRenderer = ({ value }) => (
   </span>
 );
 
+const DeleteButton = (value) => {
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.delete(`admin/plan/${value?.data?.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+
+      console.log("response : ", response);
+      createToast(response?.data?.message, "success");
+    }
+    catch (err) {
+      console.log(err);
+      if(err?.response?.data?.error === "Token Expired") {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
+      createToast(err?.response?.data?.error, "error");
+    }
+  };
+  return (
+    <Button
+      onClick={handleDelete}
+      sx={{ m: 0, width: "115%", mr: 10, ml: -1.5, mb: 0.5 }}
+    >
+      <DeleteOutlineOutlinedIcon sx={{ color: "black"}}/>
+    </Button>
+  );
+};
+
 const PlanTable = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [gridApi, setGridApi] = useState(null);
@@ -48,10 +81,16 @@ const PlanTable = () => {
       })
       .catch((err) => {
         console.log(err);
+        createToast(err?.response?.data?.error, "error");
+        if(err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
         throw new Error(err);
       });
     let data = response?.data;
     if (Array.isArray(data) && data.length > 0) {
+      createToast(response?.data?.message, "success");
       return await data.map((plan) => {
         const maxResolution = plan?.features?.filter(
           (feature) => feature.name === "max-resolution"
@@ -70,6 +109,8 @@ const PlanTable = () => {
         };
       });
     }
+
+    createToast(response?.data?.message, "success");
     return response;
   };
 
@@ -120,6 +161,16 @@ const PlanTable = () => {
         field: "max-devices",
         width: 200,
       },
+      {
+        headerName: "Delete",
+        field: "delete",
+        cellRenderer: DeleteButton,
+        suppressHeaderMenuButton: true,
+        suppressHeaderFilterButton: true,
+        suppressFloatingFilterButton: true,
+        sortable: false,
+        editable: false,
+      },
       // {
       //   field: "discount",
       //   width: 125,
@@ -157,7 +208,34 @@ const PlanTable = () => {
   );
 
   const onCellValueChanged = useCallback((params) => {
-    console.log("Cell value changed:", params);
+    try {
+      console.log("Cell value changed:", params);
+      const response = axios.put(`admin/plan/${params.data.id}`, {
+        name: params.data.plan,
+        price: params.data.price,
+        discountPercentage: params.data["discount%"],
+        maxResolution: params.data["max-resolution"],
+        maxDevices: params.data["max-devices"],
+      },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      ).then((response) => {
+        console.log("response : ", response);
+        createToast(response?.data?.message, "success");
+      }).catch((err) => {
+        console.log(err);
+        if(err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
+        createToast(err?.response?.data?.error, "error");
+      });
+    }
+    catch (err) {
+      createToast(err?.response?.data?.error, "error");
+      console.log(err);
+    }
   }, []);
 
   return (

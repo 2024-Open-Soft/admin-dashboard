@@ -13,6 +13,7 @@ import "./style.css";
 import { TagInput } from "rsuite";
 import { required } from "./required";
 import axios from "axios";
+import createToast from "../utils/createToast";
 
 const style = {
   form: {
@@ -138,9 +139,15 @@ const CreatePlan = () => {
       )
       .then((res) => {
         console.log(res);
+        createToast(res?.data?.data?.message, "success");
       })
       .catch((err) => {
         console.log(err);
+        if(err?.response?.data?.error === "Token Expired") {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
+        createToast(err?.response?.data?.error)
       });
   };
 
@@ -191,7 +198,7 @@ const CreatePlan = () => {
       <Box sx={style.boxStyle}>
         <Box sx={{ width: "48%" }}>
           <Typography variant="" sx={{ fontSize: "large", mt: 1, mb: 1 }}>
-            Dicount %
+            Discount %
           </Typography>
           <TextField
             margin="normal"
@@ -208,7 +215,7 @@ const CreatePlan = () => {
         </Box>
         <Box sx={{ width: "48%" }}>
           <Typography variant="" sx={{ fontSize: "large", mt: 1, mb: 1 }}>
-            Dicount Amount
+            Discount Amount
           </Typography>
           <OutlinedInput
             id="dicountAmount"
