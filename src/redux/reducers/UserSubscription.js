@@ -13,7 +13,7 @@ export const userSubscription = createSlice({
     setUserSubscription: (state, action) => {
       state.data = action.payload;
       //   console.log("action.payload : ", action.payload);
-      console.log("state.data : ", state.data);
+      // console.log("state.data : ", state.data);
     },
   },
 });

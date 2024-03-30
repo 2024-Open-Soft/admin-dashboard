@@ -11,7 +11,7 @@ const Subscriptionsdirect = (value) => {
   const dispatch = useDispatch();
 
   const handleClicked = (e) => {
-    console.log("value : ", value);
+    // console.log("value : ", value);
   };
   return (
     <Button
@@ -23,14 +23,14 @@ const Subscriptionsdirect = (value) => {
   );
 };
 
-// const dateFormatter = (params) => {
-//   return new Date(params.value).toLocaleDateString("en-us", {
-//     weekday: "long",
-//     year: "numeric",
-//     month: "short",
-//     day: "numeric",
-//   });
-// };
+const dateFormatter = (params) => {
+  return new Date(params.value).toLocaleDateString("en-us", {
+    weekday: "long",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
 
 const countryCodes = [
   { code: "+91", country: "India" },
@@ -46,7 +46,7 @@ const SubscriptionsTable = ({ setValue }) => {
   const anotherdata = useSelector((state) => state.usersubscription.data);
   const subs = anotherdata?.subscriptions;
 
-  console.log("another : ", anotherdata);
+  // console.log("another : ", anotherdata);
 
   const [userSubscription, setUserSubscription] = useState();
 
@@ -75,32 +75,12 @@ const SubscriptionsTable = ({ setValue }) => {
       {
         headerName: "Start Date",
         field: "startDate",
-        valueFormatter: (params) => {
-          if (!params.value) {
-            return "";
-          }
-          const month = params.value.getMonth() + 1;
-          const day = params.value.getDate();
-          return `${params.value.getFullYear()}-${
-            month < 10 ? "0" + month : month
-          }-${day < 10 ? "0" + day : day}`;
-        },
-        cellEditor: "agDateCellEditor",
+        valueFormatter: dateFormatter,
       },
       {
         headerName: "End Date",
         field: "endDate",
-        valueFormatter: (params) => {
-          if (!params.value) {
-            return "";
-          }
-          const month = params.value.getMonth() + 1;
-          const day = params.value.getDate();
-          return `${params.value.getFullYear()}-${
-            month < 10 ? "0" + month : month
-          }-${day < 10 ? "0" + day : day}`;
-        },
-        cellEditor: "agDateCellEditor",
+        valueFormatter: dateFormatter,
       },
       {
         field: "status",
@@ -148,9 +128,9 @@ const SubscriptionsTable = ({ setValue }) => {
   );
 
   const onCellValueChanged = useCallback((params) => {
-    console.log("Cell value changed:", params.data);
+    // console.log("Cell value changed:", params.data);
     try {
-      console.log("Cell value changed:", params);
+      // console.log("Cell value changed:", params);
       const response = axios
         .put(
           `admin/user/${anotherdata.id}`,
@@ -167,7 +147,7 @@ const SubscriptionsTable = ({ setValue }) => {
           }
         )
         .then((response) => {
-          console.log("response : ", response);
+          // console.log("response : ", response);
           createToast("Subscription Updated", "success");
         })
         .catch((err) => {

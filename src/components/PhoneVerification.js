@@ -27,14 +27,14 @@ const VerificationPhone = ({ setStep }) => {
   const handleSendOTP = async (event) => {
     event.preventDefault();
 
-    console.log(phone, countryCode.code);
-    console.log(countryCode.code + phone);
+    // console.log(phone, countryCode.code);
+    // console.log(countryCode.code + phone);
 
     try {
       const response = await axios.post("/otp/generate", {
         phoneNumber: countryCode.code + phone,
       });
-      console.log(response);
+      // console.log(response);
       localStorage.setItem("token", response.data.data.token);
       createToast(response?.data?.message, "success")
     } catch (err) {
@@ -63,7 +63,7 @@ const VerificationPhone = ({ setStep }) => {
         }
       );
 
-      console.log(response);
+      // console.log(response);
       localStorage.setItem("token", response.data.data.token);
       createToast(response?.data?.message, "success")
     } catch (err) {

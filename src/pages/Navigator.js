@@ -11,6 +11,8 @@ const LazySignUp = lazy(() => import("./SignUp"));
 const LazyLogin = lazy(() => import("./Login"));
 const LazyAdmin = lazy(() => import("./AdminPage"));
 const LazyUpload = lazy(() => import("./Upload"));
+const LazyAnalysis = lazy(() => import("./Analytics"));
+
 const Navigator = () => {
   const dispatch = useDispatch();
 
@@ -50,6 +52,16 @@ const Navigator = () => {
       element: (
         <Suspense fallback={<h1>Loading</h1>}>
           <LazyUpload />,
+        </Suspense>
+      ),
+      protected: true,
+      errorElement: <Error />,
+    },
+    {
+      path: "/analysis",
+      element: (
+        <Suspense fallback={<h1>Loading</h1>}>
+          <LazyAnalysis />,
         </Suspense>
       ),
       protected: true,

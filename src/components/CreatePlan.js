@@ -138,7 +138,7 @@ const CreatePlan = () => {
         { headers }
       )
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         createToast(res?.data?.data?.message, "success");
       })
       .catch((err) => {

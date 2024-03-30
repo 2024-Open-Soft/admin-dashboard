@@ -11,7 +11,7 @@ import { Button } from "@mui/material";
 
 const DeleteButton = (value) => {
   const handleDelete = async (e) => {
-    console.log("vale : ", value);
+    // console.log("vale : ", value);
     e.preventDefault();
     try {
       const response = await axios.delete(
@@ -21,7 +21,7 @@ const DeleteButton = (value) => {
         }
       );
 
-      console.log("response : ", response);
+      // console.log("response : ", response);
       createToast(`${value?.colDef?.field} Deleted Successfully`, "success");
     } catch (err) {
       console.log(err);
@@ -42,28 +42,6 @@ const DeleteButton = (value) => {
   );
 };
 
-// const VideoImageRenderer = ({ value }) => (
-//   <span
-//     style={{
-//       display: "flex",
-//       justifyContent: "start",
-//       alignItems: "center",
-//     }}
-//   >
-//     <p
-//       style={{
-//         width: 150,
-//         height: 100,
-//         textOverflow: "ellipsis",
-//         overflow: "hidden",
-//         whiteSpace: "nowrap",
-//       }}
-//     >
-//       {value?.description || value}
-//     </p>
-//   </span>
-// );
-
 const dateFormatter = (params) => {
   return new Date(params.value).toLocaleDateString("en-us", {
     weekday: "long",
@@ -79,7 +57,7 @@ const VideoTable = () => {
   const [gridApi, setGridApi] = useState(null);
 
   const getAllMovies = async () => {
-    console.log("token : ", localStorage.getItem("token"));
+    // console.log("token : ", localStorage.getItem("token"));
     const response = await axios
       .get("/admin/movie", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -93,11 +71,11 @@ const VideoTable = () => {
         createToast(err?.response?.data?.error, "error");
         throw new Error(err);
       });
-    console.log("res : ", response);
+    // console.log("res : ", response);
     let data = response.data?.data?.movies || [];
-    console.log("hello");
+    // console.log("hello");
 
-    console.log("data : ", data);
+    // console.log("data : ", data);
 
     if (Array.isArray(data) && data.length > 0) {
       createToast(response?.data?.message, "success");
@@ -116,9 +94,9 @@ const VideoTable = () => {
         };
       });
     }
-    console.log("no no no");
-    console.log("data : ", data);
-    console.log("yes yes yes");
+    // console.log("no no no");
+    // console.log("data : ", data);
+    // console.log("yes yes yes");
     createToast(response?.data?.message, "error");
     return data;
   };
@@ -144,36 +122,10 @@ const VideoTable = () => {
         width: 350,
         cellEditor: "agLargeTextCellEditor",
       },
-      // {
-      //   field: "views",
-      //   width: 130,
-      //   cellEditor: "agNumberCellEditor",
-      //   cellEditorParams: {
-      //     min: 0,
-      //   },
-      // },
       {
         field: "date",
         valueFormatter: dateFormatter,
-        cellEditor: "agDateCellEditor",
       },
-      // {
-      //   field: "dislikes",
-      //   width: 125,
-      //   cellEditor: "agNumberCellEditor",
-      //   cellEditorParams: {
-      //     min: 0,
-      //   },
-      // },
-      // {
-      //   field: "price",
-      //   width: 130,
-      //   valueFormatter: (params) => `$${params.value.toLocaleString()}`,
-      //   cellEditor: "agNumberCellEditor",
-      //   cellEditorParams: {
-      //     min: 0,
-      //   },
-      // },
       {
         field: "rated",
         cellEditor: "agSelectCellEditor",
@@ -197,40 +149,6 @@ const VideoTable = () => {
         field: "IMDB",
       },
       { field: "languages" },
-
-      {
-        headerName: "Delete Poster",
-        field: "poster",
-        cellRenderer: DeleteButton,
-        suppressHeaderMenuButton: true,
-        suppressHeaderFilterButton: true,
-        suppressFloatingFilterButton: true,
-        sortable: false,
-        editable: false,
-      },
-
-      {
-        headerName: "Delete Trailor",
-        field: "trailer",
-        cellRenderer: DeleteButton,
-        suppressHeaderMenuButton: true,
-        suppressHeaderFilterButton: true,
-        suppressFloatingFilterButton: true,
-        sortable: false,
-        editable: false,
-      },
-
-      {
-        headerName: "Delete Video",
-        field: "video",
-        cellRenderer: DeleteButton,
-        suppressHeaderMenuButton: true,
-        suppressHeaderFilterButton: true,
-        suppressFloatingFilterButton: true,
-        sortable: false,
-        editable: false,
-      },
-
       {
         headerName: "Delete Movie",
         field: "movie",
@@ -241,23 +159,9 @@ const VideoTable = () => {
         sortable: false,
         editable: false,
       },
-      // {
-      //   field: "description",
-      //   cellEditor: "agLargeTextCellEditor",
-      //   cellEditorPopup: true,
-      //   cellEditorParams: {
-      //     maxLength: 100,
-      //   },
-      // },
     ],
     []
   );
-
-  // useEffect(() => {
-  //   fetch("https://www.ag-grid.com/example-assets/space-mission-data.json")
-  //     .then((result) => result.json())
-  //     .then((rowData) => setRowData(rowData));
-  // }, []);
 
   const onSelectionChanged = useCallback(() => {
     const selectedNodes = gridApi.getSelectedRows();
@@ -277,15 +181,20 @@ const VideoTable = () => {
     []
   );
 
+  const onPaginationChanged = useCallback(() => {
+    // const currentPage = gridApi.paginationGetCurrentPage() + 1;
+    // console.log("Current Page:", currentPage);
+  }, [gridApi]);
+
   const onCellValueChanged = useCallback(async (params) => {
-    console.log("Cell value changed:", params);
+    // console.log("Cell value changed:", params);
     try {
       const response = axios
         .put(`/admin/movie/${params.data.id}`, params.data, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         .then((res) => {
-          console.log("res : ", res);
+          // console.log("res : ", res);
           createToast("Movie Updated", "success");
         })
         .catch((err) => {
@@ -313,6 +222,7 @@ const VideoTable = () => {
         onSelectionChanged={onSelectionChanged}
         pagination={true}
         onCellValueChanged={onCellValueChanged}
+        onPaginationChanged={onPaginationChanged}
       />
       <p>Selected Rows Count: {selectedRows.length}</p>
     </div>
