@@ -252,10 +252,10 @@ const UserTable = ({ setValue }) => {
     []
   );
 
-  const onPaginationChanged = useCallback(() => {
-    const currentPage = gridApi.paginationGetCurrentPage() + 1;
-    console.log(`Current page is ${currentPage}`);
-  }, [gridApi]);
+  // const onPaginationChanged = useCallback(() => {
+  //   const currentPage = gridApi.paginationGetCurrentPage() + 1;
+  //   console.log(`Current page is ${currentPage}`);
+  // }, [gridApi]);
 
   const onCellValueChanged = useCallback((params) => {
     try {
@@ -304,7 +304,7 @@ const UserTable = ({ setValue }) => {
         onSelectionChanged={onSelectionChanged}
         pagination={true}
         onCellValueChanged={onCellValueChanged}
-        onPaginationChanged={onPaginationChanged}
+        // onPaginationChanged={onPaginationChanged}
       />
       <p>Selected Rows Count: {selectedRows.length}</p>
     </div>
