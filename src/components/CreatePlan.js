@@ -138,12 +138,12 @@ const CreatePlan = () => {
         { headers }
       )
       .then((res) => {
-        // console.log(res);
+        // // console.log(res);
         createToast(res?.data?.data?.message, "success");
       })
       .catch((err) => {
-        console.log(err);
-        if(err?.response?.data?.error === "Token Expired") {
+        // console.log(err);
+        if (err?.response?.data?.error === "Token Expired") {
           localStorage.removeItem("token");
           window.location.href = "/login";
         }

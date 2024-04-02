@@ -68,8 +68,8 @@ const CreateUser = () => {
   };
 
   const handleCountryCodeChange = (value) => {
-    // console.log("e.target.value: ", e.target.value);
-    // console.log("value: ", value);
+    // // console.log("e.target.value: ", e.target.value);
+    // // console.log("value: ", value);
     setUserDetails({
       ...userDetails,
       countryCode: value,
@@ -79,7 +79,7 @@ const CreateUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // setUserDetails({ ...userDetails, countryCode: value.code });
-    // console.log("userDetails: ", userDetails);
+    // // console.log("userDetails: ", userDetails);
     const reqrd = required(userDetails);
     if (reqrd) {
       setError("All fields are required");
@@ -99,7 +99,7 @@ const CreateUser = () => {
     await axios
       .post("/admin/user", { ...userDetails, phoneNumber: `${userDetails.countryCode}${userDetails.phone}` }, { headers })
       .then((res) => {
-        // console.log(res);
+        // // console.log(res);
         createToast(res?.data?.message, "success");
         setUserDetails({
           email: "",
@@ -113,11 +113,11 @@ const CreateUser = () => {
       .catch((err) => {
         // setError(err?.response?.data?.error);
         createToast(err?.response?.data?.error, "error");
-        if(err?.response?.data?.error === "Token Expired") {
+        if (err?.response?.data?.error === "Token Expired") {
           localStorage.removeItem("token");
           window.location.href = "/login";
         }
-        console.log(err);
+        // console.log(err);
       });
   };
 

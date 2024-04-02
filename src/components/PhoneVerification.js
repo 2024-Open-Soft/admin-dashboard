@@ -27,19 +27,19 @@ const VerificationPhone = ({ setStep }) => {
   const handleSendOTP = async (event) => {
     event.preventDefault();
 
-    // console.log(phone, countryCode.code);
-    // console.log(countryCode.code + phone);
+    // // console.log(phone, countryCode.code);
+    // // console.log(countryCode.code + phone);
 
     try {
       const response = await axios.post("/otp/generate", {
         phoneNumber: countryCode.code + phone,
       });
-      // console.log(response);
+      // // console.log(response);
       localStorage.setItem("token", response.data.data.token);
       createToast(response?.data?.message, "success")
     } catch (err) {
-      console.log(err);
-      if(err?.response?.data?.error === "Token Expired") {
+      // console.log(err);
+      if (err?.response?.data?.error === "Token Expired") {
         localStorage.removeItem("token");
         window.location.href = "/login";
       }
@@ -63,16 +63,16 @@ const VerificationPhone = ({ setStep }) => {
         }
       );
 
-      // console.log(response);
+      // // console.log(response);
       localStorage.setItem("token", response.data.data.token);
       createToast(response?.data?.message, "success")
     } catch (err) {
-      if(err?.response?.data?.error === "Token Expired") {
+      if (err?.response?.data?.error === "Token Expired") {
         localStorage.removeItem("token");
         window.location.href = "/login";
       }
       createToast(err?.response?.data?.error, "error")
-      console.log(err);
+      // console.log(err);
     }
 
     setStep(2);

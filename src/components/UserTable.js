@@ -15,10 +15,10 @@ const Subscriptionsdirect = (value) => {
   const dispatch = useDispatch();
   const handleClicked = (e) => {
     e.preventDefault();
-    // console.log("value : ", value);
+    // // console.log("value : ", value);
     const subscriptions = value?.data?.subscriptions?.map((sub) => {
       const { startDate, endDate } = subscriptionstartAndEndDate(sub);
-      // console.log("startDate : ", startDate, "endDate : ", endDate);
+      // // console.log("startDate : ", startDate, "endDate : ", endDate);
       return {
         plan: sub?.plan,
         startDate,
@@ -54,10 +54,10 @@ const DeleteButton = (value) => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
-      // console.log("response : ", response);
+      // // console.log("response : ", response);
       createToast("User Deleted Successfully", "success");
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       if (err?.response?.data?.error === "Token Expired") {
         localStorage.removeItem("token");
         window.location.href = "/login";
@@ -88,13 +88,13 @@ const UserTable = ({ setValue }) => {
   const [gridApi, setGridApi] = useState(null);
 
   const getAllUsers = async () => {
-    // console.log("token : ", localStorage.getItem("token"));
+    // // console.log("token : ", localStorage.getItem("token"));
     const response = await axios
       .get("/admin/user", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         createToast(err?.response?.data?.error, "error");
         if (err?.response?.data?.error === "Token Expired") {
           localStorage.removeItem("token");
@@ -102,9 +102,9 @@ const UserTable = ({ setValue }) => {
         }
         throw new Error(err);
       });
-    // console.log("res : ", response);
+    // // console.log("res : ", response);
     let data = response.data?.data?.users;
-    // console.log("hello");
+    // // console.log("hello");
     if (Array.isArray(data) && data.length > 0) {
       createToast(response?.data?.message, "success");
       return await data.map((user) => {
@@ -120,9 +120,9 @@ const UserTable = ({ setValue }) => {
         };
       });
     }
-    // console.log("no no no");
-    // console.log("data : ", data);
-    // console.log("yes yes yes");
+    // // console.log("no no no");
+    // // console.log("data : ", data);
+    // // console.log("yes yes yes");
     createToast(response?.data?.message, "success");
     return data;
   };
@@ -134,8 +134,8 @@ const UserTable = ({ setValue }) => {
     refetchOnWindowFocus: false,
   });
 
-  // console.log("rowData : ", rowData);
-  // console.log("error : ", error);
+  // // console.log("rowData : ", rowData);
+  // // console.log("error : ", error);
 
   const colDefs = useMemo(
     () => [
@@ -254,12 +254,12 @@ const UserTable = ({ setValue }) => {
 
   // const onPaginationChanged = useCallback(() => {
   //   const currentPage = gridApi.paginationGetCurrentPage() + 1;
-  //   console.log(`Current page is ${currentPage}`);
+  //   // console.log(`Current page is ${currentPage}`);
   // }, [gridApi]);
 
   const onCellValueChanged = useCallback((params) => {
     try {
-      // console.log("Cell value changed:", params);
+      // // console.log("Cell value changed:", params);
       const response = axios
         .put(
           `admin/user/${params.data.id}`,
@@ -276,11 +276,11 @@ const UserTable = ({ setValue }) => {
           }
         )
         .then((response) => {
-          // console.log("response : ", response);
+          // // console.log("response : ", response);
           createToast("User Updated", "success");
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
           if (err?.response?.data?.error === "Token Expired") {
             localStorage.removeItem("token");
             window.location.href = "/login";
@@ -288,7 +288,7 @@ const UserTable = ({ setValue }) => {
           createToast(err?.response?.data?.error, "error");
         });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       createToast(err?.response?.data?.error, "error");
     }
   }, []);
@@ -304,7 +304,7 @@ const UserTable = ({ setValue }) => {
         onSelectionChanged={onSelectionChanged}
         pagination={true}
         onCellValueChanged={onCellValueChanged}
-        // onPaginationChanged={onPaginationChanged}
+      // onPaginationChanged={onPaginationChanged}
       />
       <p>Selected Rows Count: {selectedRows.length}</p>
     </div>

@@ -4,8 +4,8 @@ import { setCountries } from "./redux/reducers/CountryReducer";
 export const countries = async (dispatch) => {
   const countrydata = await axios
     .get("https://restcountries.com/v3.1/all/?fields=name")
-    .catch((err) => console.log(err));
-  let countries = [];
+    .catch((err) => {});
+      let countries = [];
   Object.keys(countrydata.data).forEach((key) => {
     countries.push({ title: countrydata.data[key].name?.official });
   });

@@ -11,7 +11,7 @@ const Subscriptionsdirect = (value) => {
   const dispatch = useDispatch();
 
   const handleClicked = (e) => {
-    // console.log("value : ", value);
+    // // console.log("value : ", value);
   };
   return (
     <Button
@@ -46,7 +46,7 @@ const SubscriptionsTable = ({ setValue }) => {
   const anotherdata = useSelector((state) => state.usersubscription.data);
   const subs = anotherdata?.subscriptions;
 
-  // console.log("another : ", anotherdata);
+  // // console.log("another : ", anotherdata);
 
   const [userSubscription, setUserSubscription] = useState();
 
@@ -128,9 +128,9 @@ const SubscriptionsTable = ({ setValue }) => {
   );
 
   const onCellValueChanged = useCallback((params) => {
-    // console.log("Cell value changed:", params.data);
+    // // console.log("Cell value changed:", params.data);
     try {
-      // console.log("Cell value changed:", params);
+      // // console.log("Cell value changed:", params);
       const response = axios
         .put(
           `admin/user/${anotherdata.id}`,
@@ -147,11 +147,11 @@ const SubscriptionsTable = ({ setValue }) => {
           }
         )
         .then((response) => {
-          // console.log("response : ", response);
+          // // console.log("response : ", response);
           createToast("Subscription Updated", "success");
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
           if (err?.response?.data?.error === "Token Expired") {
             localStorage.removeItem("token");
             window.location.href = "/login";
@@ -159,7 +159,7 @@ const SubscriptionsTable = ({ setValue }) => {
           createToast(err?.response?.data?.error, "error");
         });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       createToast(err?.response?.data?.error, "error");
     }
   }, []);

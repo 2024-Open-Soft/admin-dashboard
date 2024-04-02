@@ -36,7 +36,7 @@ export const findSubscriptionStatus = (plans) => {
 
 export const subscriptionstartAndEndDate = (plan) => {
   const startDateObj = new Date(plan.startDate);
-  //   console.log("plan.originalDuration : ", plan.orignalDuration);
+  //   // console.log("plan.originalDuration : ", plan.orignalDuration);
   const endDate = new Date(
     startDateObj.getTime() + plan.orignalDuration * 24 * 60 * 60 * 1000
   );
@@ -62,6 +62,6 @@ export const logout = async (dispatch) => {
     if (error?.response?.data?.error?.startsWith("Token expired"))
       localStorage.removeItem("token");
     createToast(error?.response?.data?.error, "error");
-    console.log(error?.response?.data?.error);
+    // console.log(error?.response?.data?.error);
   }
 };

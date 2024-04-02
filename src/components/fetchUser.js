@@ -15,15 +15,15 @@ export async function fetchUserData(dispatch) {
       .then(({ data }) => {
         dispatch(setUser(data?.data));
         createToast(data?.message, "success");
-        // console.log("userData : ", data);
+        // // console.log("userData : ", data);
       })
       .catch((err) => {
         createToast(err?.response?.data?.error, "error");
-        if(err?.response?.data?.error === "Token Expired") {
+        if (err?.response?.data?.error === "Token Expired") {
           localStorage.removeItem("token");
           window.location.href = "/login";
         }
-        console.log("err : ", err);
+        // console.log("err : ", err);
       });
   }
 }

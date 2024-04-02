@@ -137,11 +137,11 @@ const VideoUpload = () => {
     await axios
       .post(`/admin/movie/${id}/poster/upload`, formData, config)
       .then((res) => {
-        // console.log(res);
+        // // console.log(res);
         createToast(res?.data?.message || "Movie poster submitted", "success");
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         createToast("Movie poster submission failed", "error");
       });
   };
@@ -157,12 +157,12 @@ const VideoUpload = () => {
     await axios
       .post(`/admin/movie/${id}/trailer/upload`, formData, config)
       .then((res) => {
-        // console.log(res);
+        // // console.log(res);
         handlePosterFileSubmit(id);
         createToast("Movie trailer submitted", "success");
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         if (err?.response?.data?.error === "Token Expired") {
           localStorage.removeItem("token");
           window.location.href = "/login";
@@ -183,12 +183,12 @@ const VideoUpload = () => {
     await axios
       .post(`/admin/movie/${id}/upload`, formData, config)
       .then((res) => {
-        // console.log(res);
+        // // console.log(res);
         createToast("Movie file submitted", "success");
         handleTrailerFileSubmit(id);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         if (err?.response?.data?.error === "Token Expired") {
           localStorage.removeItem("token");
           window.location.href = "/login";
@@ -235,12 +235,12 @@ const VideoUpload = () => {
         config
       )
       .then((res) => {
-        // console.log(res);
+        // // console.log(res);
         createToast(res?.data?.message || "Movie trailer submitted", "success");
         handleMovieFileSubmit(res.data?.data?.movie?._id);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         if (err?.response?.data?.error === "Token Expired") {
           localStorage.removeItem("token");
           window.location.href = "/login";

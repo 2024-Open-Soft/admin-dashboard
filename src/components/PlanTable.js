@@ -47,12 +47,12 @@ const DeleteButton = (value) => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
-      // console.log("response : ", response);
+      // // console.log("response : ", response);
       createToast(response?.data?.message, "success");
     }
     catch (err) {
-      console.log(err);
-      if(err?.response?.data?.error === "Token Expired") {
+      // console.log(err);
+      if (err?.response?.data?.error === "Token Expired") {
         localStorage.removeItem("token");
         window.location.href = "/login";
       }
@@ -64,7 +64,7 @@ const DeleteButton = (value) => {
       onClick={handleDelete}
       sx={{ m: 0, width: "115%", mr: 10, ml: -1.5, mb: 0.5 }}
     >
-      <DeleteOutlineOutlinedIcon sx={{ color: "black"}}/>
+      <DeleteOutlineOutlinedIcon sx={{ color: "black" }} />
     </Button>
   );
 };
@@ -74,15 +74,15 @@ const PlanTable = () => {
   const [gridApi, setGridApi] = useState(null);
 
   const getAllPlans = async () => {
-    // console.log("token : ", localStorage.getItem("token"));
+    // // console.log("token : ", localStorage.getItem("token"));
     const response = await axios
       .get("/plan", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         createToast(err?.response?.data?.error, "error");
-        if(err?.response?.data?.error === "Token Expired") {
+        if (err?.response?.data?.error === "Token Expired") {
           localStorage.removeItem("token");
           window.location.href = "/login";
         }
@@ -209,7 +209,7 @@ const PlanTable = () => {
 
   const onCellValueChanged = useCallback((params) => {
     try {
-      // console.log("Cell value changed:", params);
+      // // console.log("Cell value changed:", params);
       const response = axios.put(`admin/plan/${params.data.id}`, {
         name: params.data.plan,
         price: params.data.price,
@@ -221,11 +221,11 @@ const PlanTable = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       ).then((response) => {
-        // console.log("response : ", response);
+        // // console.log("response : ", response);
         createToast(response?.data?.message, "success");
       }).catch((err) => {
-        console.log(err);
-        if(err?.response?.data?.error === "Token Expired") {
+        // console.log(err);
+        if (err?.response?.data?.error === "Token Expired") {
           localStorage.removeItem("token");
           window.location.href = "/login";
         }
@@ -234,7 +234,7 @@ const PlanTable = () => {
     }
     catch (err) {
       createToast(err?.response?.data?.error, "error");
-      console.log(err);
+      // console.log(err);
     }
   }, []);
 
